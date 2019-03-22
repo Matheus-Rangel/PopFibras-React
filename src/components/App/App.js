@@ -1,21 +1,31 @@
 import React, { Component } from 'react';
-import './app.css';
-import Dashboard from '../dashboard/dashboard'
-import Locais from '../locais/locais'
-import AccountProvider from '../account/accountContext';
+import Dashboard from '../Dashboard'
+import Locais from '../Locais'
+import {Route, Redirect} from 'react-router-dom';
+import { access } from 'fs';
 class App extends Component {
-  state = {
-    isloggedin: false,
-    locais: true,
-  };
+  constructor(props){
+    super(props)
+    state = {
+      isLoggedIn: true,
+      locais: true,
+    };
+  }
+
   render() {
+    if (!this.state.isLoggedIn) {
+      return (<Redirect to='/' />)
+    }
     return (
       <div>
-        <AccountProvider>
         <Dashboard>
-          <Locais expand={this.state.locais}/>
-        </Dashboard>
-        </AccountProvider>
+          <Route path="/locais" exact={true} component={Locais} />
+          <Route path="/cabos" exact={true} component={Locais} />
+          <Route path="/estados-link" exact={true} component={Locais} />
+          <Route path="/dios" exact={true} component={Locais} />
+          <Portas expand={Dios}/>
+        </Dashboard> : 
+        <Redirect to='/login'/>
       </div>
     );
   }

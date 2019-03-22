@@ -1,12 +1,20 @@
 import React, { Component } from 'react'
+import PropTypes from 'prop-types';
+import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import IconButton from '@material-ui/core/IconButton';
 import Button from '@material-ui/core/Button';
 import Menu from '@material-ui/core/Menu';
-import LoginMenu from './loginMenu'
-import AccountMenu from './accountMenu'
-import { AccountContext } from './accountContext';
+import MenuItem from '@material-ui/core/MenuItem'
+
+const styles = theme => ({
+  accountMenu: {
+    position: 'absolute',
+    height: 40,
+    width: 30,
+  }
+});
 
 class Account extends Component {
   state = {
@@ -20,38 +28,42 @@ class Account extends Component {
   };
   render() {
     const { anchorEl } = this.state;
+    const { classes } = this.props;
     return (
-      <AccountContext.Consumer>
-        {context => (
-          <React.Fragment>
-            <div>
-              <Button color="inherit" onClick={this.handleClick}>
-                <AccountCircleIcon />
-                <Typography color='inherit'
-                  component="h1"
-                  variant="subtitle1"
-                  style={{ paddingLeft: 3 }}
-                >
-                  Login
+      <React.Fragment>
+        <div>
+          <Button color="inherit" onClick={this.handleClick}>
+            <AccountCircleIcon />
+            <Typography color='inherit'
+              component="h1"
+              variant="subtitle1"
+              style={{ paddingLeft: 3 }}
+            >
+              Login
             </Typography>
-              </Button>
-              <Menu
-                id="account-menu"
-                anchorEl={anchorEl}
-                open={Boolean(anchorEl)}
-                onClose={this.handleClose}
+          </Button>
+          <Menu
+            id="account-menu"
+            anchorEl={anchorEl}
+            open={Boolean(anchorEl)}
+            onClose={this.handleClose}
+            className={classes.accountMenu}
+          >
+            <MenuItem>
+              <Typography color='inherit'
+                component="h1"
+                variant="subtitle1"
               >
-                {context.state.isLoggedIn ?
-                  <AccountMenu /> : <LoginMenu />
-                }
-              </Menu>
-            </div>
-          </React.Fragment>
-        )
-        }
-      </AccountContext.Consumer>
+                Logout
+              </Typography>
+            </MenuItem>
+          </Menu>
+        </div>
+      </React.Fragment>
     )
   }
 }
-
-export default Account
+Account.propTypes = {
+  classes: PropTypes.object.isRequired,
+};
+export default withStyles(styles)(Account);

@@ -3,16 +3,36 @@ import PropTypes from 'prop-types';
 import FormControl from '@material-ui/core/FormControl';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
+import FormHelperText from '@material-ui/core/FormHelperText';
 import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
-import { withStyles } from '@material-ui/core';
-import { withRouter } from 'react-router-dom'
-import ls from 'local-storage'
+import { withStyles, Divider, Paper } from '@material-ui/core';
+import { Redirect } from 'react-router-dom'
+import CircularProgress from '@material-ui/core/CircularProgress';
+
 const styles = theme => ({
+  background: {
+    position: 'absolute',
+    width: '100%',
+    height: '100%',
+    // background: 'linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)',
+    // background: 'linear-gradient(120deg, #8a2387, #e94057, #f27121)',
+  },
+  divider: {
+    marginTop: theme.spacing.unit * 3,
+    marginBottom: theme.spacing.unit * 3
+  },
+  loginPaper: {
+    position: 'absolute',
+    left: '50%',
+    top: '50%',
+    transform: 'translate(-50%,-50%)',
+    width: theme.spacing.unit * 50,
+  },
   loginMenu: {
-    padding: theme.spacing.unit * 3
+    margin: theme.spacing.unit * 3,
   },
   avatar: {
     margin: theme.spacing.unit,
@@ -33,79 +53,102 @@ class Login extends Component {
     incorrectCredencials: false,
     serverError: false,
     loading: false,
+    isLoggedIn: false,
   }
   handleChange = event => {
-    console.log(event.target.value)
     this.setState({
       [event.target.name]: event.target.value
     });
   }
   handleLogin = () => {
-    fetch('/login',
-    {
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      method: 'POST',
-      body: JSON.stringify({username: this.state.username, password: this.state.password})
+    if (this.state.loading){
+      return null
     }
-    ).then( res => {
-        if(res.status == 200){
-          this.setState({incorrectCredencials:false, serverError:false});
-          return res.json();
-        }else if(res.status == 401){
-          this.setState({incorrectCredencials:true});
-          return null;
-        }
-        else{
-          this.setState({serverError:true});
-          return null;
-        }
+    this.setState({
+      loading: true,
+      serverError: false,
+      incorrectCredencials: false,
+    })
+    fetch('/login',
+      {
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        method: 'POST',
+        body: JSON.stringify({ username: this.state.username, password: this.state.password })
       }
+    ).then(res => {
+      console.log(res.status)
+      this.setState({loading: false})
+      if (res.status == 200) {
+        this.setState({ incorrectCredencials: false, serverError: false });
+        return res.json();
+      } else if (res.status == 401) {
+        this.setState({ incorrectCredencials: true });
+        return null;
+      }
+      else {
+        this.setState({ serverError: true });
+        console.log(res)
+        return null;
+      }
+    }
     ).then(data => {
-        if (!data){
-          return null
-        }
-        ls.setItem('username', data.username);
-        ls.setItem('access_token', data.access_token);
-        ls.setItem('refresh_token', data.refresh_token);
+      if (!data) {
         return null
       }
+      localStorage.setItem('username', data.username);
+      localStorage.setItem('access_token', data.access_token);
+      localStorage.setItem('refresh_token', data.refresh_token);
+      this.setState({ isLoggedIn: true })
+      return null
+    }
     )
   }
   render() {
     const { classes } = this.props
+    if (this.state.isLoggedIn) {
+      return (<Redirect to='/' />)
+    }
     return (
-      <div className={classes.loginMenu}>
-          {context => (
-            <React.Fragment>
-              <Typography component="h1" variant="h5">
-                  Login
-              </Typography>
-              <div className={classes.form}>
-                <FormControl margin="normal" required fullWidth>
-                  <InputLabel htmlFor="username">Usuário</InputLabel>
-                  <Input id="username" name="username" autoFocus value={context.state.username} onChange={context.handleChange} />
-                </FormControl>
-                <FormControl margin="normal" required fullWidth>
-                  <InputLabel htmlFor="password">Senha</InputLabel>
-                  <Input name="password" type="password" id="password" autoComplete="current-password" value={context.state.password} onChange={context.handleChange} />
-                </FormControl>
-                <Button
-                  type="submit"
-                  fullWidth
-                  variant="contained"
-                  color="primary"
-                  className={classes.submit}
-                  onClick={context.handleLogin}
-                >
-                  Entrar
+      <React.Fragment>
+        <div className={classes.background}></div>
+        <Paper className={classes.loginPaper} elevation={4}>
+          <div className={classes.loginMenu}>
+            <Typography color='inherit' component="h1" variant="h3">
+              PoP Fibras
+            </Typography>
+            <Divider className={classes.divider}/>
+            <div className={classes.form}>
+              {(this.state.serverError || this.state.incorrectCredencials) &&
+                <FormHelperText error={true}>Usuario ou senha incorretos.</FormHelperText>
+              }
+              <FormControl margin="normal" required fullWidth error={this.state.incorrectCredencials || this.state.serverError}>
+                <InputLabel htmlFor="username">Usuário</InputLabel>
+                <Input id="username" name="username" autoFocus value={this.state.username} onChange={this.handleChange} />
+              </FormControl>
+              <FormControl margin="normal" required fullWidth error={this.state.incorrectCredencials || this.state.serverError}>
+                <InputLabel htmlFor="password">Senha</InputLabel>
+                <Input name="password" type="password" id="password" autoComplete="current-password" value={this.state.password} onChange={this.handleChange} />
+              </FormControl>
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                disabled={this.state.loading}
+                color="primary"
+                className={classes.submit}
+                onClick={this.handleLogin}
+              >
+                {this.state.loading ? 
+                  <CircularProgress className={classes.progress} color="inherit" />:
+                  'Entrar'
+                }
               </Button>
-              </div>
-            </React.Fragment>
-          )}
-        </AccountContext.Consumer>
-      </div>
+            </div>
+          </div>
+        </Paper>
+      </React.Fragment>
     )
   }
 }
