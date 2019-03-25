@@ -185,7 +185,7 @@ class Dashboard extends React.Component {
           </div>
           <Divider />
           <List>
-            <ListItems />
+            <ListItems handleClick={this.props.toggleDrawer}/>
           </List>
         </Drawer>
         <div className={classNames(classes.overlayBack, this.state.open && classes.overlayBackActive)} onClick={this.handleDrawerClose} />
