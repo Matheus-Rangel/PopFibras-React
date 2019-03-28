@@ -1,14 +1,9 @@
 import React, { Component } from 'react';
 import PropTypes, { number } from 'prop-types';
 import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
-import ListItemText from '@material-ui/core/ListItemText';
-import LocationOffIcon from '@material-ui/icons/LocationOff'
-import AddLocationIcon from '@material-ui/icons/AddLocation'
 import { withStyles } from '@material-ui/core/styles';
 import Local from './Local'
+import LocalAdd from './LocalAdd';
 const styles = theme => ({
 });
 class Locais extends Component {
@@ -59,25 +54,11 @@ class Locais extends Component {
     const { classes } = this.props;
     return (
       <List>
-        {this.state.data ? this.state.data.locais.map(local => 
-          (<Local refreshToken={this.props.refreshToken} key={local.id} data={local} fetch={this.fetchLocais}/>)): 
-          <ListItem>
-            <ListItemIcon>
-              <LocationOffIcon />
-            </ListItemIcon>
-            <ListItemText>
-              Nenhum Local Cadastrado
-            </ListItemText>
-          </ListItem>
+        { this.state.data &&
+          this.state.data.locais.map(local => 
+          (<Local refreshToken={this.props.refreshToken} key={local.id} data={local} fetch={this.fetchLocais}/>))
         }
-        <ListItem button>
-          <ListItemIcon>
-            <AddLocationIcon />
-          </ListItemIcon>
-          <ListItemText>
-            Adicionar Local
-          </ListItemText>
-        </ListItem>
+        <LocalAdd refreshToken={this.props.refreshToken} fetch={this.fetchLocais} data={this.state.data}/>
       </List>
     )
   }

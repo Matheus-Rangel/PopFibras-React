@@ -168,7 +168,7 @@ class Dashboard extends React.Component {
             >
               Pop Fibras
             </Typography>
-            <Account />
+            <Account onClick={this.props.handleLogout}/>
           </Toolbar>
         </AppBar>
         <Drawer

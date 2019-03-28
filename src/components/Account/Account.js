@@ -1,69 +1,23 @@
-import React, { Component } from 'react'
-import PropTypes from 'prop-types';
-import { withStyles } from '@material-ui/core/styles';
+import React from 'react'
 import Typography from '@material-ui/core/Typography';
-import AccountCircleIcon from '@material-ui/icons/AccountCircle';
-import IconButton from '@material-ui/core/IconButton';
+import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import Button from '@material-ui/core/Button';
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem'
 
-const styles = theme => ({
-  accountMenu: {
-    position: 'absolute',
-    height: 40,
-    width: 30,
-  }
-});
-
-class Account extends Component {
-  state = {
-    anchorEl: null,
-  }
-  handleClick = event => {
-    this.setState({ anchorEl: event.currentTarget })
-  }
-  handleClose = () => {
-    this.setState({ anchorEl: null });
-  };
-  render() {
-    const { anchorEl } = this.state;
-    const { classes } = this.props;
-    return (
+function Account (props) {
+  return (
       <React.Fragment>
-        <div>
-          <Button color="inherit" onClick={this.handleClick}>
-            <AccountCircleIcon />
+          <Button color="inherit" onClick={props.onClick}>
+            <ExitToAppIcon />
             <Typography color='inherit'
               component="h1"
               variant="subtitle1"
               style={{ paddingLeft: 3 }}
             >
-              Login
+              Sair
             </Typography>
           </Button>
-          <Menu
-            id="account-menu"
-            anchorEl={anchorEl}
-            open={Boolean(anchorEl)}
-            onClose={this.handleClose}
-            className={classes.accountMenu}
-          >
-            <MenuItem>
-              <Typography color='inherit'
-                component="h1"
-                variant="subtitle1"
-              >
-                Logout
-              </Typography>
-            </MenuItem>
-          </Menu>
-        </div>
       </React.Fragment>
-    )
-  }
+  )
 }
-Account.propTypes = {
-  classes: PropTypes.object.isRequired,
-};
-export default withStyles(styles)(Account);
+
+export default Account;

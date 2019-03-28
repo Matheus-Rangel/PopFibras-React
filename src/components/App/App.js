@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Drawer } from '@material-ui/core';
+import { Drawer, withStyles } from '@material-ui/core';
 
 import Dashboard from '../Dashboard';
 import Locais from '../Locais';
@@ -7,7 +7,11 @@ import Cabos from '../Cabos';
 import Estados from '../Estados';
 import Dios from '../Dios';
 import TabelaPortas from '../TabelaPortas';
-
+const styles = (theme) => ({
+  drawerPaper: {
+    maxHeight: 'calc(100% - 64px)'
+  }
+});
 
 class App extends Component {
   constructor(props){
@@ -56,10 +60,20 @@ class App extends Component {
   setLocal = (local) => {
     this.setState({currentLocal: local, currentDio: local.dios[0]})
   }
+  handleLogout = () => {
+    localStorage.clear()
+    this.props.history.push('/login')
+  }
   render() {
+    const {classes} = this.props
     return (
       <div>
-        <Dashboard currentLocal={this.state.currentLocal} currentDio={this.state.currentDio} toggleDrawer={this.toggleDrawer}>
+        <Dashboard 
+          currentLocal={this.state.currentLocal} 
+          currentDio={this.state.currentDio} 
+          toggleDrawer={this.toggleDrawer}
+          handleLogout={this.handleLogout}
+          >
           <TabelaPortas currentDio={this.state.currentDio}/>
         </Dashboard>
 
@@ -67,6 +81,9 @@ class App extends Component {
           open={this.state.locais} 
           onClose={this.toggleDrawer('locais', false)}
           anchor='bottom'
+          classes={{
+            paperAnchorBottom: classes.drawerPaper
+          }}
         >
           <Locais setLocal={this.setLocal} refreshToken={this.refreshToken}/>
         </Drawer>
@@ -76,7 +93,7 @@ class App extends Component {
           onClose={this.toggleDrawer('cabos', false)}
           anchor='bottom'
         >
-          <Cabos />
+          <Cabos refreshToken={this.refreshToken}/>
         </Drawer>
 
         <Drawer 
@@ -99,4 +116,4 @@ class App extends Component {
   }
 }
 
-export default App
+export default withStyles(styles)(App)

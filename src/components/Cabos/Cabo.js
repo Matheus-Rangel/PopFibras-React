@@ -16,6 +16,7 @@ export default class Local extends Component {
       deleteDialog: false,
       nome : props.data.nome,
       observacao : props.data.observacao,
+      quantidadeFibras: props.data.quantidade_fibras,
       save: false,
     }
   }
@@ -35,13 +36,13 @@ export default class Local extends Component {
   handleUpdate = () => {
     this.setState({save:false})
     let token = localStorage.getItem('access_token')
-    fetch('/local',{
+    fetch('/cabo',{
       method: 'PATCH',
       headers: {
         Authorization: 'Bearer ' + token,
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ id: this.props.data.id, nome: this.state.nome, observacao: this.state.observacao })
+      body: JSON.stringify({ id: this.props.data.id, nome: this.state.nome, observacao: this.state.observacao, quantidade_fibras:this.state.quantidadeFibras })
     }).then(res => {
       if (res.status == 401) {
         console.log(token)
@@ -49,6 +50,7 @@ export default class Local extends Component {
         this.handleUpdate();
         return null;
       }else if(res.status == 500){
+        console.log(res)
         return null
       }else{
         return res.json();
@@ -86,6 +88,15 @@ export default class Local extends Component {
                   value={this.state.nome} 
                   onChange={this.handleInput}
                   fullWidth={true}
+                />
+              </Grid>
+              <Grid item>
+                <TextField
+                  label="Quantidade de Fibras"
+                  name="quantidadeFibras"
+                  value={this.state.quantidadeFibras}
+                  disabled={true}
+                  type="number"
                 />
               </Grid>
               <Grid item xs={12} md={8} lg={6}>
