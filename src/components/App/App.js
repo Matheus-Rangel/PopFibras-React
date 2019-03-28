@@ -42,11 +42,8 @@ class App extends Component {
         }
         return res.json()
       }).then(data => {
-        localStorage.setItem('access_token', data.access_token)
+        localStorage.setItem('access_token', data.access_token);
       });
-    }
-    componentDidMount(){
-      this.refresh_interval = setInterval(this.refreshToken, 840000)
     }
   }
   toggleDrawer = (state, open) => () =>{
@@ -71,7 +68,7 @@ class App extends Component {
           onClose={this.toggleDrawer('locais', false)}
           anchor='bottom'
         >
-          <Locais setLocal={this.setLocal}/>
+          <Locais setLocal={this.setLocal} refreshToken={this.refreshToken}/>
         </Drawer>
 
         <Drawer 
