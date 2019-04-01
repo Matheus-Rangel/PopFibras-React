@@ -31,6 +31,7 @@ class Locais extends Component {
         return res.json();
       }
     }).then( data => {
+      console.log(data)
       if (!data){
         return null
       }

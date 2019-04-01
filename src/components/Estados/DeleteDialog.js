@@ -9,7 +9,7 @@ export default class DeleteDialog extends Component {
   handleDelete = () => {
     this.setState({ save: false })
     let token = localStorage.getItem('access_token')
-    fetch('/cabo', {
+    fetch('/estado-link', {
       method: 'DELETE',
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -18,8 +18,7 @@ export default class DeleteDialog extends Component {
       body: JSON.stringify({id:this.props.id})
     }).then(res => {
       if (res.status == 401) {
-        this.props.refreshToken();
-        this.handleDelete();
+        this.props.refreshToken().then((data) => (data && this.handleDelete()));
         return null;
       } else if (res.status != 200) {
         console.log(res)
@@ -48,8 +47,8 @@ export default class DeleteDialog extends Component {
         <DialogTitle id="form-dialog-title">Deletar Cabo</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            Ao deletar um cabo todas as portas associadas a esse cabo ficaram sem associação.
-            </DialogContentText>
+            Ao deletar todas as portas associadas irão perder o estado.
+          </DialogContentText>
         </DialogContent>
         <DialogActions>
           <Button onClick={this.props.onClose} color="primary">

@@ -26,12 +26,13 @@ class App extends Component {
     };
     this.refreshToken = this.refreshToken.bind(this)
   }
-  refreshToken(){
-    const refreshToken = localStorage.getItem('refresh_token')
+  async refreshToken(){
+    const refreshToken = localStorage.getItem('refresh_token');
+    let success = false;
     if (!refreshToken) {
       this.props.history.push('/login')
     }else{
-      fetch('/token/refresh',
+      await fetch('/token/refresh',
       {
         method: 'POST',
         headers: {
@@ -40,15 +41,19 @@ class App extends Component {
       }
       ).then(res => {
         if (res.status != 200){
-          this.props.history.push('/login')
-          console.log(res)
+          this.props.history.push('/login');
+          console.log(res);
           return null
         }
         return res.json()
       }).then(data => {
-        localStorage.setItem('access_token', data.access_token);
+        if (data){
+          localStorage.setItem('access_token', data.access_token);
+          success = true;
+        }
       });
     }
+    return success
   }
   toggleDrawer = (state, open) => () =>{
     console.log('state ' + state +', open ' + open);
@@ -101,7 +106,7 @@ class App extends Component {
           onClose={this.toggleDrawer('estados', false)}
           anchor='bottom'
         >
-          <Estados />
+          <Estados refreshToken={this.refreshToken}/>
         </Drawer>
 
         <Drawer 
