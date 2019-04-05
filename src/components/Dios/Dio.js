@@ -1,14 +1,14 @@
 import React, { Component } from 'react'
 import ListItem from '@material-ui/core/ListItem'
 import ListItemText from '@material-ui/core/ListItemText'
-import {ListItemIcon, Divider, Button, TextField, Grid, Checkbox }from '@material-ui/core';
+import {ListItemIcon, Divider, Button, TextField, Grid, Radio }from '@material-ui/core';
+import ShortTextIcon from '@material-ui/icons/ShortText';
 import ExpandLess from '@material-ui/icons/ExpandLess';
 import ExpandMore from '@material-ui/icons/ExpandMore';
 import Collapse from '@material-ui/core/Collapse';
 import DeleteDialog from './DeleteDialog';
-import Tooltip from '@material-ui/core/Tooltip';
 
-export default class Local extends Component {
+export default class Dio extends Component {
   constructor(props){
     super(props);
     this.state = {
@@ -25,14 +25,13 @@ export default class Local extends Component {
   checkSave = () => {
     if(this.state.nome != '' &&
     this.state.nome != this.props.data.nome &&
-    !this.props.list.find((local) => (local.nome == this.state.nome && local.id != this.props.data.id))){
+    !this.props.list.find((dio) => (dio.nome == this.state.nome && dio.id != this.props.data.id))){
       this.setState({save: true})
     }else if(this.state.nome == this.props.data.nome && this.state.observacao != this.props.data.observacao){
       this.setState({save: true})
     }else{
       this.setState({save:false})
     }
-    console.log(this.props.data)
   }
   handleInput = (event) => {
     let name = event.target.name;
@@ -42,7 +41,7 @@ export default class Local extends Component {
   handleUpdate = () => {
     this.setState({save:false})
     let token = localStorage.getItem('access_token')
-    fetch('/local',{
+    fetch('/dio',{
       method: 'PATCH',
       headers: {
         Authorization: 'Bearer ' + token,
@@ -75,17 +74,15 @@ export default class Local extends Component {
   render() {
     return (
       <div>
-        <ListItem button style={{paddingBottom:0, paddingTop:0}}>
+        <ListItem button>
           <ListItemIcon>
-            <Tooltip title="Selecionar" placement="bottom">
-              <Checkbox
-                checked={this.props.currentLocal == this.props.data.id}
-                onChange={this.props.setLocal}
-                value={this.props.data.id.toString()}
-              />
-            </Tooltip>
+            <Radio 
+              checked={this.props.currentDio == this.props.data.id}
+              onChange={this.props.setDio}
+              value={this.props.data.id}
+            />
           </ListItemIcon>
-          <ListItemText style={{height:'100%'}}onClick={this.handleClick}>{this.props.data.nome}</ListItemText>
+          <ListItemText onClick={this.handleClick}>{this.props.data.nome}</ListItemText>
           {this.state.open ? <ExpandLess onClick={this.handleClick}/> : <ExpandMore onClick={this.handleClick}/>}
         </ListItem>
         <Divider/>
@@ -111,7 +108,13 @@ export default class Local extends Component {
                   fullWidth={true}
                 />
               </Grid>
-              <Grid item lg={3}>
+              <Grid item xs={12}>
+                <TextField
+                  label="Quantidade de Portas"
+                  name="quantidadePortas"
+                  disabled
+                  value={this.props.data.quantidade_portas}
+                />
               </Grid>
               <Grid item>
                 <Button color='primary' variant='contained' disabled={!this.state.save} onClick={this.handleUpdate}>
@@ -132,6 +135,7 @@ export default class Local extends Component {
           onClose={this.deleteDialog}
           id={this.props.data.id}
           fetch={this.props.fetch}
+          refreshToken={this.props.refreshToken}
         />
       </div>
     )

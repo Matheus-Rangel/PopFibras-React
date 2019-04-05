@@ -59,11 +59,12 @@ class App extends Component {
     console.log('state ' + state +', open ' + open);
     this.setState({[state]:open});
   };
-  setDio = (dio) => {
-    this.setState({currentDio: dio})
+  setDio = (event) => {
+    this.setState({currentDio: event.target.value})
   }
-  setLocal = (local) => {
-    this.setState({currentLocal: local, currentDio: local.dios[0]})
+  setLocal = (event) => {
+    console.log(event.target)
+    this.setState({currentLocal: event.target.value, currentDio: null})
   }
   handleLogout = () => {
     localStorage.clear()
@@ -71,6 +72,7 @@ class App extends Component {
   }
   render() {
     const {classes} = this.props
+    {console.log(this.state.currentDio)}
     return (
       <div>
         <Dashboard 
@@ -79,7 +81,7 @@ class App extends Component {
           toggleDrawer={this.toggleDrawer}
           handleLogout={this.handleLogout}
           >
-          <TabelaPortas currentDio={this.state.currentDio}/>
+          <TabelaPortas currentDio={this.state.currentDio} refreshToken={this.refreshToken}/>
         </Dashboard>
 
         <Drawer 
@@ -90,13 +92,16 @@ class App extends Component {
             paperAnchorBottom: classes.drawerPaper
           }}
         >
-          <Locais setLocal={this.setLocal} refreshToken={this.refreshToken}/>
+          <Locais setLocal={this.setLocal} currentLocal={this.state.currentLocal} refreshToken={this.refreshToken}/>
         </Drawer>
 
         <Drawer 
           open={this.state.cabos} 
           onClose={this.toggleDrawer('cabos', false)}
           anchor='bottom'
+          classes={{
+            paperAnchorBottom: classes.drawerPaper
+          }}
         >
           <Cabos refreshToken={this.refreshToken}/>
         </Drawer>
@@ -105,6 +110,9 @@ class App extends Component {
           open={this.state.estados} 
           onClose={this.toggleDrawer('estados', false)}
           anchor='bottom'
+          classes={{
+            paperAnchorBottom: classes.drawerPaper
+          }}
         >
           <Estados refreshToken={this.refreshToken}/>
         </Drawer>
@@ -113,8 +121,11 @@ class App extends Component {
           open={this.state.dios} 
           onClose={this.toggleDrawer('dios', false)}
           anchor='bottom'
+          classes={{
+            paperAnchorBottom: classes.drawerPaper
+          }}
         >
-          <Dios setDio={this.setDio}/>
+          <Dios setDio={this.setDio} currentDio={this.state.currentDio} currentLocal={this.state.currentLocal} refreshToken={this.refreshToken}/>
         </Drawer>
       </div>
     );

@@ -20,22 +20,17 @@ export default class LocalAdd extends Component {
   handleClick = () => {
     this.setState(state => ({ open: !state.open }))
   }
+  checkSave = () => {
+    if(this.state.nome != '' &&
+    !this.props.list.find((local) => (local.nome == this.state.nome ))){
+      this.setState({save: true})
+    }else{
+      this.setState({save:false})
+    }
+  }
   handleInput = (event) => {
     const { name, value } = event.target
-    this.setState({ [name]: value })
-    if (name == 'nome' && value != '') {
-      if(this.props.data && this.props.data.locais.find((local) => 
-          {
-            return local.nome == value;
-          })
-        ){
-        this.setState({ save: false })
-      }else{
-        this.setState({ save: true })
-      }
-    } else if(name=='nome'){
-      this.setState({ save: false })
-    }
+    this.setState({ [name]: value }, this.checkSave)
   }
   handleSave = () => {
     this.setState({save:false})

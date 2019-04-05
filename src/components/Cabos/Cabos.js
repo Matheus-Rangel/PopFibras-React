@@ -51,9 +51,9 @@ class Cabos extends Component {
       <List>
         { this.state.data &&
           this.state.data.cabos.map(cabo => 
-          (<Cabo refreshToken={this.props.refreshToken} key={cabo.id} data={cabo} fetch={this.fetchCabos}/>))
+          (<Cabo refreshToken={this.props.refreshToken} key={cabo.id} data={cabo} list={this.state.data.cabos} fetch={this.fetchCabos}/>))
         }
-        <CaboAdd refreshToken={this.props.refreshToken} fetch={this.fetchCabos} data={this.state.data}/>
+        <CaboAdd refreshToken={this.props.refreshToken} fetch={this.fetchCabos} list={this.state.data ? this.state.data.cabos : []} data={this.state.data}/>
       </List>
     )
   }

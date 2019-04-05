@@ -23,15 +23,23 @@ export default class Local extends Component {
   handleClick = () => {
     this.setState(state => ({open : !state.open}))
   }
+  checkSave = () => {
+    if (this.state.nome != '' &&
+        this.props.data.nome != this.state.nome &&
+        !this.props.list.find((cabo) => (cabo.nome == this.state.nome && this.props.data.id != cabo.id))
+    ){
+      this.setState({save:true})
+    }else if(this.state.observacao != this.props.data.observacao){
+      this.setState({save:true})
+    }
+    else{
+      this.setState({save:false})
+    }
+  }
   handleInput = (event) => {
     let name = event.target.name;
     let value = event.target.value;
-    this.setState({[name]:value})
-    if (this.props.data[name] != value){
-      this.setState({save:true})
-    }else{
-      this.setState({save:false})
-    }
+    this.setState({[name]:value}, this.checkSave)
   }
   handleUpdate = () => {
     this.setState({save:false})

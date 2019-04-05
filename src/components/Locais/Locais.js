@@ -54,12 +54,23 @@ class Locais extends Component {
   render() {
     const { classes } = this.props;
     return (
+      
       <List>
         { this.state.data &&
-          this.state.data.locais.map(local => 
-          (<Local refreshToken={this.props.refreshToken} key={local.id} data={local} fetch={this.fetchLocais}/>))
+        this.state.data.locais.map(local => 
+        (
+        <Local 
+          refreshToken={this.props.refreshToken} 
+          key={local.id} 
+          data={local} 
+          list={this.state.data.locais} 
+          fetch={this.fetchLocais}
+          currentLocal={this.props.currentLocal}
+          setLocal={this.props.setLocal}
+          />
+          ))
         }
-        <LocalAdd refreshToken={this.props.refreshToken} fetch={this.fetchLocais} data={this.state.data}/>
+        <LocalAdd refreshToken={this.props.refreshToken} fetch={this.fetchLocais} list={this.state.data ? this.state.data.locais: null}/>
       </List>
     )
   }
