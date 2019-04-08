@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Drawer, withStyles } from '@material-ui/core';
+import { Drawer, withStyles, Typography } from '@material-ui/core';
 
 import Dashboard from '../Dashboard';
 import Locais from '../Locais';
@@ -81,7 +81,12 @@ class App extends Component {
           toggleDrawer={this.toggleDrawer}
           handleLogout={this.handleLogout}
           >
-          <TabelaPortas currentDio={this.state.currentDio} refreshToken={this.refreshToken}/>
+          {this.state.currentDio ? 
+            <TabelaPortas currentDio={this.state.currentDio} refreshToken={this.refreshToken}/> :
+            < Typography>
+              Nenhum Dio Selecionado
+            </Typography>
+            }
         </Dashboard>
 
         <Drawer 

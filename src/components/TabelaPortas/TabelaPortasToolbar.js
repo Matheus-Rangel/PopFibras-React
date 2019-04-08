@@ -51,7 +51,7 @@ let TabelaPortasToolbar = props => {
           </Typography>
         ) : (
           <Typography variant="h6" id="tableTitle">
-            {props.currentLocal ? props.currentLocal.nome : 'loading'}
+            {props.currentLocal} - {props.currentDio}
           </Typography>
         )}
       </div>
