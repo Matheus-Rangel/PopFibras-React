@@ -23,10 +23,17 @@ export default class TabelaPortasHead extends React.Component {
 
   render() {
     const { onSelectAllClick, order, orderBy, numSelected, rowCount } = this.props;
-
+    console.log({selecioado: numSelected, total: rowCount})
     return (
       <TableHead>
         <TableRow>
+          <TableCell padding="checkbox">
+            <Checkbox
+              indeterminate={numSelected > 0 && numSelected < rowCount}
+              checked={numSelected === rowCount}
+              onChange={onSelectAllClick}
+            />
+          </TableCell>
           {rows.map(
             row => (
               <TableCell
@@ -45,6 +52,9 @@ export default class TabelaPortasHead extends React.Component {
               </TableCell>
             ),
           )}
+          <TableCell>
+            
+          </TableCell>
         </TableRow>
       </TableHead>
     );

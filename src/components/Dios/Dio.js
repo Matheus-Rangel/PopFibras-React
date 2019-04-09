@@ -1,8 +1,7 @@
 import React, { Component } from 'react'
 import ListItem from '@material-ui/core/ListItem'
 import ListItemText from '@material-ui/core/ListItemText'
-import {ListItemIcon, Divider, Button, TextField, Grid, Radio }from '@material-ui/core';
-import ShortTextIcon from '@material-ui/icons/ShortText';
+import {ListItemIcon, Divider, Button, TextField, Grid, Checkbox, Tooltip, Typography }from '@material-ui/core';
 import ExpandLess from '@material-ui/icons/ExpandLess';
 import ExpandMore from '@material-ui/icons/ExpandMore';
 import Collapse from '@material-ui/core/Collapse';
@@ -74,15 +73,19 @@ export default class Dio extends Component {
   render() {
     return (
       <div>
-        <ListItem button>
+        <ListItem button style={{paddingBottom:0, paddingTop:0}}>
           <ListItemIcon>
-            <Radio 
-              checked={this.props.currentDio == this.props.data.id}
-              onChange={this.props.setDio}
-              value={this.props.data.id}
-            />
+            <Tooltip title="Selecionar" placement="bottom">
+              <Checkbox
+                checked={this.props.currentDio == this.props.data.id}
+                onChange={this.props.setDio}
+                value={this.props.data.id.toString()}
+              />
+            </Tooltip>
           </ListItemIcon>
-          <ListItemText onClick={this.handleClick}>{this.props.data.nome}</ListItemText>
+          <ListItemText style={{lineHeight: '48px'}} disableTypography onClick={this.handleClick}>
+            {this.props.data.nome}
+          </ListItemText>
           {this.state.open ? <ExpandLess onClick={this.handleClick}/> : <ExpandMore onClick={this.handleClick}/>}
         </ListItem>
         <Divider/>

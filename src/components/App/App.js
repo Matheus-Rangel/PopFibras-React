@@ -81,14 +81,13 @@ class App extends Component {
           toggleDrawer={this.toggleDrawer}
           handleLogout={this.handleLogout}
           >
-          {this.state.currentDio ? 
-            <TabelaPortas currentDio={this.state.currentDio} refreshToken={this.refreshToken}/> :
-            < Typography>
-              Nenhum Dio Selecionado
-            </Typography>
-            }
+        {this.state.currentDio ? 
+          <TabelaPortas currentDio={this.state.currentDio} refreshToken={this.refreshToken}/> :
+          < Typography>
+            Nenhum Dio Selecionado
+          </Typography>
+        }
         </Dashboard>
-
         <Drawer 
           open={this.state.locais} 
           onClose={this.toggleDrawer('locais', false)}

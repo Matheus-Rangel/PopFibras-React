@@ -85,7 +85,9 @@ export default class Local extends Component {
               />
             </Tooltip>
           </ListItemIcon>
-          <ListItemText style={{height:'100%'}}onClick={this.handleClick}>{this.props.data.nome}</ListItemText>
+          <ListItemText style={{lineHeight: '48px'}} disableTypography onClick={this.handleClick}>
+            {this.props.data.nome}
+          </ListItemText>
           {this.state.open ? <ExpandLess onClick={this.handleClick}/> : <ExpandMore onClick={this.handleClick}/>}
         </ListItem>
         <Divider/>
