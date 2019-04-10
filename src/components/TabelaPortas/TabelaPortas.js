@@ -52,7 +52,7 @@ class TabelaPortas extends Component {
     this.setState({ selected: [] });
   };
 
-  handleSelectClick = (event, porta) => {
+  handleSelectClick = (porta) => {
     const { selected } = this.state;
     const selectedIndex = selected.map((element) => element.id).indexOf(porta.id);
     let newSelected = [];
@@ -71,6 +71,8 @@ class TabelaPortas extends Component {
     }
     this.setState({ selected: newSelected });
   };
+
+  isSelected = id => this.state.selected.map((porta)=> (porta.id)).indexOf(id) !== -1;
   
   async fetchData(id){
     let token = localStorage.getItem('access_token')
@@ -140,6 +142,7 @@ class TabelaPortas extends Component {
                       key={porta.id}
                       data={porta}
                       handleSelectClick={this.handleSelectClick}
+                      isSelected={this.isSelected(porta.id)}
                     />
                   )}
                 </TableBody>

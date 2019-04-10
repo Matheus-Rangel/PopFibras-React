@@ -10,7 +10,7 @@ import Tooltip from '@material-ui/core/Checkbox';
 
 const rows = [
   { id: 'estado', numeric: false, disablePadding: true, label: 'Estado de Link' },
-  { id: 'numero_porta', numeric: true, disablePadding: false, label: 'Numero da Porta' },
+  { id: 'numero_porta', numeric: true, disablePadding: true, label: 'Numero da Porta' },
   { id: 'local_destino', numeric: false, disablePadding: false, label: 'Local de Destino' },
   { id: 'dio_destino', numeric: false, disablePadding: false, label: 'Dio de Destino' },
   { id: 'porta_destino', numeric: true, disablePadding: false, label: 'Porta de Destino' },
@@ -38,7 +38,7 @@ export default class TabelaPortasHead extends React.Component {
             row => (
               <TableCell
                 key={row.id}
-                align={row.numeric ? 'right' : 'left'}
+                align={'left'}
                 padding={row.disablePadding ? 'none' : 'default'}
                 sortDirection={orderBy === row.id ? order : false}
               >

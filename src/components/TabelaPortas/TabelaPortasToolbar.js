@@ -77,7 +77,6 @@ let TabelaPortasToolbar = props => {
 
 TabelaPortasToolbar.propTypes = {
   classes: PropTypes.object.isRequired,
-  numSelected: PropTypes.number.isRequired,
 };
 
 export default withStyles(styles)(TabelaPortasToolbar);

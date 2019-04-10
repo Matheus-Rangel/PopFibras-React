@@ -79,15 +79,17 @@ const styles = theme => ({
   },
   appBarSpacer: theme.mixins.toolbar,
   content: {
-    padding: theme.spacing.unit * 3,
+    padding: theme.spacing.unit * 1,
     overflow: 'auto',
     position: 'absolute',
+    maxWidth: `calc(100% - ${theme.spacing.unit * 7}px)`,
     top: theme.spacing.unit * 7,
     left: theme.spacing.unit * 7,
     [theme.breakpoints.up('sm')]: {
       left: theme.spacing.unit * 9,
+      padding: theme.spacing.unit * 3,
     },
-    zIndex: 0
+    zIndex: 0,
   },
   chartContainer: {
     marginLeft: -22,
