@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import {List} from '@material-ui/core';
 import Estado from './Estado';
 import EstadoAdd from './EstadoAdd';
-
+import {getEstados} from '../../services/FetchEstado';
 export default class Estados extends Component {
   constructor(props){
     super(props);
@@ -13,40 +13,15 @@ export default class Estados extends Component {
   componentDidMount(){
     this.fetchEstados()
   }
-  fetchEstados = () => {
-    let token = localStorage.getItem('access_token')
-    fetch('/estados-link',{
-      headers: {
-        Authorization : 'Bearer '+ token
-      }
-    }).then(res => {
-      if (res.status == 401) {
-        console.log(token)
-        this.props.refreshToken().then(() => this.fetchEstados());
-        return null;
-      }else if(res.status == 500){
-        return null
-      }else{
-        return res.json();
-      }
-    }).then( data => {
-      console.log(data)
-      if (!data){
-        return null
-      }
-      data.estados.sort((a,b) => {
-        if (a.nome > b.nome) {
-          return 1;
-        }
-        if (a.nome < b.nome) {
-          return -1;
-        }
-        return 0;
-      })
-      this.setState({data:data});
-      return null;
-    });
+  fetchEstados = async () => {
+    let res = await getEstados();
+    if (!res) {
+      await this.props.refreshToken();
+      res = await getEstados();
+    }
+    this.setState({data:res});  
   }
+  
   render() {
     return (
       <List>

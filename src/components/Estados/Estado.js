@@ -8,6 +8,7 @@ import ExpandMore from '@material-ui/icons/ExpandMore';
 import Collapse from '@material-ui/core/Collapse';
 import DeleteDialog from './DeleteDialog';
 import {CirclePicker} from 'react-color';
+import { patchEstado } from '../../services/FetchEstado';
 
 export default class Estado extends Component {
   constructor(props){
@@ -25,21 +26,22 @@ export default class Estado extends Component {
     this.setState(state => ({open : !state.open}))
   }
   checkSave = () => {
+    let s = false
     if (this.state.nome != this.props.data.nome
       && this.state.nome != ''
       && !this.props.list.find((estado) => (
         estado.nome == this.state.nome && estado.id != this.props.data.id
       ))
     ){
-      this.setState({save:true})
+      s = true;
     }
     if(this.state.cor != this.props.data.cor){
-      this.setState({save:true})
-    }else if(this.state.observacao != this.props.data.observacao){
-      this.setState({save:true})
-    }else{
-      this.setState({save:false})
+      s = true;
     }
+    if(this.state.observacao != this.props.data.observacao){
+      s = true;
+    }
+    this.setState({save:s})
   }
   handleInput = (event) => {
     let name = event.target.name;
@@ -53,35 +55,14 @@ export default class Estado extends Component {
       this.checkSave()
     })
   }
-  handleUpdate = () => {
+  handleUpdate = async () => {
     this.setState({save:false})
-    let token = localStorage.getItem('access_token')
-    fetch('/estado-link',{
-      method: 'PATCH',
-      headers: {
-        'Authorization': 'Bearer ' + token,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ id: this.props.data.id, nome: this.state.nome, observacao: this.state.observacao, cor:this.state.cor})
-    }).then(res => {
-      if (res.status == 401) {
-        console.log(token)
-        this.props.refreshToken().then((status) => (status && this.handleUpdate));
-        return null;
-      }else if(res.status == 500){
-        console.log(res)
-        return null
-      }else{
-        return res.json();
-      }
-    }).then( data => {
-      console.log(data)
-      if (!data){
-        return null
-      }
-      this.props.fetch()
-      return null;
-    });
+    let res = await patchEstado(this.props.data.id, this.state.nome, this.state.observacao, this.state.cor);
+    if (res.status == 401) {
+      await this.props.refreshToken()
+      res = await patchEstado(this.props.data.id, this.state.nome, this.state.observacao, this.state.cor);
+    }
+    this.props.fetch()
   }
   deleteDialog = () =>{
     this.setState(state => ({deleteDialog:!state.deleteDialog}))

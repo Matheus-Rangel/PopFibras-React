@@ -2,6 +2,8 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types';
 import {TextField, Button, Dialog, DialogTitle,
 DialogContent, DialogContentText, DialogActions} from '@material-ui/core'; 
+
+import {deleteLocal} from '../../services/FetchLocal';
 export default class DeleteDialog extends Component {
   constructor(props){
     super(props);
@@ -14,37 +16,21 @@ export default class DeleteDialog extends Component {
     this.setState({password:event.target.value});
   }
 
-  handleDelete = () => {
+  handleDelete = async () => {
     this.setState({save:false})
-    let token = localStorage.getItem('access_token')
-    fetch('/local',{
-      method: 'DELETE',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ password: this.state.password, id: this.props.id})
-    }).then(res => {
-      if (res.status == 401) {
-        this.props.refreshToken();
-        this.handleDelete();
-        return null;
-      }else if(res.status != 200){
-        console.log(res)
-        this.setState({incorrectPassword:true})
-        return null
-      }else{
-        return res.json();
-      }
-    }).then( data => {
-      console.log(data)
-      if (!data){
-        return null
-      }
-      this.props.onClose()
-      this.props.fetch()
-      return null;
-    });
+    await this.props.refreshToken();
+    let res = await deleteLocal(this.props.id, this.state.password);
+    console.log(res)
+    if (res === 401){
+      await this.props.refreshToken();
+      res = await deleteLocal(this.props.id, this.state.password);
+    }
+    if (res !== 200){
+      this.setState({incorrectPassword:true});
+      return null
+    }
+    this.props.onClose()
+    this.props.fetch()
   }
 
   render() {

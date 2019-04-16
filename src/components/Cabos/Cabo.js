@@ -7,8 +7,9 @@ import ExpandLess from '@material-ui/icons/ExpandLess';
 import ExpandMore from '@material-ui/icons/ExpandMore';
 import Collapse from '@material-ui/core/Collapse';
 import DeleteDialog from './DeleteDialog';
+import {patchCabo} from '../../services/FetchCabo';
 
-export default class Local extends Component {
+export default class Cabo extends Component {
   constructor(props){
     super(props);
     this.state = {
@@ -41,37 +42,17 @@ export default class Local extends Component {
     let value = event.target.value;
     this.setState({[name]:value}, this.checkSave)
   }
-  handleUpdate = () => {
+  
+  handleUpdate = async () => {
     this.setState({save:false})
-    let token = localStorage.getItem('access_token')
-    fetch('/cabo',{
-      method: 'PATCH',
-      headers: {
-        Authorization: 'Bearer ' + token,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ id: this.props.data.id, nome: this.state.nome, observacao: this.state.observacao, quantidade_fibras:this.state.quantidadeFibras })
-    }).then(res => {
-      if (res.status == 401) {
-        console.log(token)
-        this.props.refreshToken();
-        this.handleUpdate();
-        return null;
-      }else if(res.status == 500){
-        console.log(res)
-        return null
-      }else{
-        return res.json();
-      }
-    }).then( data => {
-      console.log(data)
-      if (!data){
-        return null
-      }
-      this.props.fetch()
-      return null;
-    });
+    let res = await patchCabo(this.props.data.id, this.state.nome, this.state.observacao)
+    if (res === 401) {
+      await this.props.refreshToken();
+      res = await patchCabo(this.props.data.id, this.state.nome, this.state.observacao)
+    }
+    this.props.fetch()
   }
+
   deleteDialog = () =>{
     this.setState(state => ({deleteDialog:!state.deleteDialog}))
   }
@@ -138,6 +119,7 @@ export default class Local extends Component {
           onClose={this.deleteDialog}
           id={this.props.data.id}
           fetch={this.props.fetch}
+          refreshToken={this.props.refreshToken}
         />
       </div>
     )

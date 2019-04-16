@@ -4,39 +4,18 @@ import {
   Button, Dialog, DialogTitle,
   DialogContent, DialogContentText, DialogActions
 } from '@material-ui/core';
+import {deleteCabo} from '../../services/FetchCabo';
 export default class DeleteDialog extends Component {
 
-  handleDelete = () => {
-    this.setState({ save: false })
-    let token = localStorage.getItem('access_token')
-    fetch('/cabo', {
-      method: 'DELETE',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({id:this.props.id})
-    }).then(res => {
-      if (res.status == 401) {
-        this.props.refreshToken();
-        this.handleDelete();
-        return null;
-      } else if (res.status != 200) {
-        console.log(res)
-        this.setState({ incorrectPassword: true })
-        return null
-      } else {
-        return res.json();
-      }
-    }).then(data => {
-      console.log(data)
-      if (!data) {
-        return null
-      }
-      this.props.onClose()
-      this.props.fetch()
-      return null;
-    });
+  handleDelete = async () => {
+    const token = localStorage.getItem('access_token');
+    let res = await deleteCabo(this.props.id);
+    if (res === 401){
+      this.props.refreshToken();
+      res = await deleteCabo(this.props.id);
+    }  
+    this.props.onClose()
+    this.props.fetch()
   }
 
   render() {

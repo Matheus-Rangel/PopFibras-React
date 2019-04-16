@@ -7,6 +7,8 @@ import Cabos from '../Cabos';
 import Estados from '../Estados';
 import Dios from '../Dios';
 import TabelaPortas from '../TabelaPortas';
+
+import {refreshAccessToken} from '../../services/AccessToken'
 const styles = (theme) => ({
   drawerPaper: {
     maxHeight: 'calc(100% - 64px)'
@@ -27,34 +29,13 @@ class App extends Component {
     this.refreshToken = this.refreshToken.bind(this)
   }
   async refreshToken(){
-    const refreshToken = localStorage.getItem('refresh_token');
-    let success = false;
-    if (!refreshToken) {
-      this.props.history.push('/login')
-    }else{
-      await fetch('/token/refresh',
-      {
-        method: 'POST',
-        headers: {
-          'Authorization': 'Bearer '.concat(refreshToken)
-        }
-      }
-      ).then(res => {
-        if (res.status != 200){
-          this.props.history.push('/login');
-          console.log(res);
-          return null
-        }
-        return res.json()
-      }).then(data => {
-        if (data){
-          localStorage.setItem('access_token', data.access_token);
-          success = true;
-        }
-      });
+    const res = await refreshAccessToken()
+    if (res !== 200){
+      this.props.history.push('/login');
+      console.log(res);
     }
-    return success
   }
+
   toggleDrawer = (state, open) => () =>{
     console.log('state ' + state +', open ' + open);
     this.setState({[state]:open});

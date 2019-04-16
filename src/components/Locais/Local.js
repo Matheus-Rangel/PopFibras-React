@@ -8,6 +8,8 @@ import Collapse from '@material-ui/core/Collapse';
 import DeleteDialog from './DeleteDialog';
 import Tooltip from '@material-ui/core/Tooltip';
 
+import {patchLocal} from '../../services/FetchLocal';
+
 export default class Local extends Component {
   constructor(props){
     super(props);
@@ -39,35 +41,14 @@ export default class Local extends Component {
     let value = event.target.value;
     this.setState({[name]:value}, this.checkSave)
   }
-  handleUpdate = () => {
+  handleUpdate = async () => {
     this.setState({save:false})
-    let token = localStorage.getItem('access_token')
-    fetch('/local',{
-      method: 'PATCH',
-      headers: {
-        Authorization: 'Bearer ' + token,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ id: this.props.data.id, nome: this.state.nome, observacao: this.state.observacao })
-    }).then(res => {
-      if (res.status == 401) {
-        console.log(token)
-        this.props.refreshToken();
-        this.handleUpdate();
-        return null;
-      }else if(res.status == 500){
-        return null
-      }else{
-        return res.json();
-      }
-    }).then( data => {
-      console.log(data)
-      if (!data){
-        return null
-      }
-      this.props.fetch()
-      return null;
-    });
+    let data = await patchLocal(this.props.data.id, this.state.nome, this.state.observacao);
+    if (!data){
+      this.props.refreshToken();
+      data = await patchLocal(this.props.data.id, this.state.nome, this.state.observacao);
+    }
+    await this.props.fetch();
   }
   deleteDialog = () =>{
     this.setState(state => ({deleteDialog:!state.deleteDialog}))
@@ -129,7 +110,8 @@ export default class Local extends Component {
           </ListItem>
           <Divider/>
         </Collapse>
-        <DeleteDialog 
+        <DeleteDialog
+          refreshToken={this.props.refreshToken}
           open={this.state.deleteDialog}
           onClose={this.deleteDialog}
           id={this.props.data.id}

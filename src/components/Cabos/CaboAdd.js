@@ -6,6 +6,7 @@ import AddIcon from '@material-ui/icons/Add';
 import { Collapse, Grid, TextField, Button, Divider, Input } from '@material-ui/core';
 import ExpandLess from '@material-ui/icons/ExpandLess';
 import ExpandMore from '@material-ui/icons/ExpandMore';
+import {postCabo} from '../../services/FetchCabo';
 export default class LocalAdd extends Component {
   constructor(props) {
     super(props);
@@ -39,37 +40,14 @@ export default class LocalAdd extends Component {
     this.setState({ [name]: value }, this.checkSave)
   }
 
-  handleSave = () => {
+  handleSave = async () => {
     this.setState({save:false})
-    let token = localStorage.getItem('access_token')
-    fetch('/cabo',{
-      method: 'POST',
-      headers: {
-        Authorization: 'Bearer ' + token,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({nome: this.state.nome, observacao: this.state.observacao, quantidade_fibras: this.state.quantidadeFibras})
-    }).then(res => {
-      if (res.status == 401) {
-        console.log(token)
-        this.props.refreshToken();
-        this.handleSave();
-        return null;
-      }else if(res.status != 200){
-        console.log(res)
-        this.setState({nameError:true})
-        return null
-      }else{
-        return res.json();
-      }
-    }).then( data => {
-      console.log(data)
-      if (!data){
-        return null
-      }
-      this.props.fetch()
-      return null;
-    });
+    let res = await postCabo(this.state.nome, this.state.observacao, this.state.quantidadeFibras);
+    if (res.status == 401) {
+      this.props.refreshToken();
+      res = await postCabo(this.state.nome, this.state.observacao, this.state.quantidadeFibras);
+    }
+    this.props.fetch();
   }
 
   render() {

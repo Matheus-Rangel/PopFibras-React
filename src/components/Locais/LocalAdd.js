@@ -6,6 +6,8 @@ import AddLocationIcon from '@material-ui/icons/AddLocation';
 import { Collapse, Grid, TextField, Button, Divider } from '@material-ui/core';
 import ExpandLess from '@material-ui/icons/ExpandLess';
 import ExpandMore from '@material-ui/icons/ExpandMore';
+import {postLocal} from '../../services/FetchLocal';
+
 export default class LocalAdd extends Component {
   constructor(props) {
     super(props);
@@ -32,37 +34,19 @@ export default class LocalAdd extends Component {
     const { name, value } = event.target
     this.setState({ [name]: value }, this.checkSave)
   }
-  handleSave = () => {
-    this.setState({save:false})
-    let token = localStorage.getItem('access_token')
-    fetch('/local',{
-      method: 'POST',
-      headers: {
-        Authorization: 'Bearer ' + token,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({nome: this.state.nome, observacao: this.state.observacao})
-    }).then(res => {
-      if (res.status == 401) {
-        console.log(token)
-        this.props.refreshToken();
-        this.handleSave();
-        return null;
-      }else if(res.status != 200){
-        console.log(res)
-        this.setState({nameError:true})
-        return null
-      }else{
-        return res.json();
-      }
-    }).then( data => {
-      console.log(data)
-      if (!data){
-        return null
-      }
-      this.props.fetch()
-      return null;
-    });
+  handleSave = async() => {
+    this.setState({save:false});
+    let res = await postLocal(this.state.nome, this.state.observacao);
+    if (res === 401){
+      await this.props.refreshToken();
+      res = await postLocal(this.state.nome, this.state.observacao);
+    }
+    if(res !== 200){
+      console.log(res)
+      this.setState({nameError:true})
+      return null
+    }
+    this.props.fetch()
   }
 
   render() {
