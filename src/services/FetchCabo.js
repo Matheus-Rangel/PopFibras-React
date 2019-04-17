@@ -33,7 +33,7 @@ export async function patchCabo(id, nome, observacao, quantidadeFibras){
       },
       body: JSON.stringify({ id: id, nome: nome, observacao: observacao, quantidade_fibras:quantidadeFibras})
     });
-    if(res.status == 500){
+    if(res.status !== 200){
       console.log(res);
     }
     return res.status;
@@ -48,7 +48,7 @@ export async function deleteCabo(id){
     },
     body: JSON.stringify({id:id})
   });
-  if (res.status === 500) {
+  if (res.status !== 200) {
     console.log(res);  
   }
   return res.status;

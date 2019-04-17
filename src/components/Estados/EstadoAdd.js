@@ -7,6 +7,7 @@ import { Collapse, Grid, TextField, Button, Divider } from '@material-ui/core';
 import ExpandLess from '@material-ui/icons/ExpandLess';
 import ExpandMore from '@material-ui/icons/ExpandMore';
 import {CirclePicker} from 'react-color';
+import {postEstado} from '../../services/FetchEstado';
 
 export default class EstadoAdd extends Component {
   constructor(props) {
@@ -36,8 +37,7 @@ export default class EstadoAdd extends Component {
   }
   
   handleColor = (color, event) => {
-    this.setState({cor:color.hex},() => {
-    });
+    this.setState({cor:color.hex});
   }
 
   handleInput = (event) => {
@@ -45,35 +45,14 @@ export default class EstadoAdd extends Component {
     this.setState({ [name]: value });
     this.checkSave();
   }
-  handleSave = () => {
+  handleSave = async () => {
     this.setState({save:false})
-    let token = localStorage.getItem('access_token')
-    fetch('/estado-link',{
-      method: 'POST',
-      headers: {
-        Authorization: 'Bearer ' + token,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({nome: this.state.nome, observacao: this.state.observacao, cor: this.state.cor})
-    }).then(res => {
-      if (res.status == 401) {
-        console.log(token)
-        this.props.refreshToken().then((data) => {data && this.handleSave();});
-        return null;
-      }else if(res.status != 200){
-        console.log(res)
-        return null
-      }else{
-        return res.json();
-      }
-    }).then( data => {
-      console.log(data)
-      if (!data){
-        return null
-      }
-      this.props.fetch()
-      return null;
-    });
+    let res = await postEstado(this.state.nome, this.state.observacao, this.state.cor);
+    if (res.status === 401) {
+      await this.props.refreshToken();
+      res = await postEstado(this.state.nome, this.state.observacao, this.state.cor);
+    }
+    this.props.fetch();
   }
 
   render() {

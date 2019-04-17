@@ -6,7 +6,7 @@ import ExpandLess from '@material-ui/icons/ExpandLess';
 import ExpandMore from '@material-ui/icons/ExpandMore';
 import Collapse from '@material-ui/core/Collapse';
 import DeleteDialog from './DeleteDialog';
-
+import {patchDio} from '../../services/FetchDio';
 export default class Dio extends Component {
   constructor(props){
     super(props);
@@ -37,35 +37,14 @@ export default class Dio extends Component {
     let value = event.target.value;
     this.setState({[name]:value}, this.checkSave)
   }
-  handleUpdate = () => {
-    this.setState({save:false})
-    let token = localStorage.getItem('access_token')
-    fetch('/dio',{
-      method: 'PATCH',
-      headers: {
-        Authorization: 'Bearer ' + token,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ id: this.props.data.id, nome: this.state.nome, observacao: this.state.observacao })
-    }).then(res => {
-      if (res.status == 401) {
-        console.log(token)
-        this.props.refreshToken();
-        this.handleUpdate();
-        return null;
-      }else if(res.status == 500){
-        return null
-      }else{
-        return res.json();
-      }
-    }).then( data => {
-      console.log(data)
-      if (!data){
-        return null
-      }
-      this.props.fetch()
-      return null;
-    });
+  handleUpdate = async () => {
+    this.setState({save:false});
+    let res = patchDio(this.props.data.id, this.state.nome, this.state.observacao);
+    if (res.status === 401) {
+      await this.props.refreshToken();
+      res = patchDio(this.props.data.id, this.state.nome, this.state.observacao);
+    }
+    this.props.fetch()
   }
   deleteDialog = () =>{
     this.setState(state => ({deleteDialog:!state.deleteDialog}))

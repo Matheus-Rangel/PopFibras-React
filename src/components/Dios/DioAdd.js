@@ -6,6 +6,7 @@ import AddIcon from '@material-ui/icons/Add';
 import { Collapse, Grid, TextField, Button, Divider } from '@material-ui/core';
 import ExpandLess from '@material-ui/icons/ExpandLess';
 import ExpandMore from '@material-ui/icons/ExpandMore';
+import {postDio} from '../../services/FetchDio';
 export default class LocalAdd extends Component {
   constructor(props) {
     super(props);
@@ -35,41 +36,15 @@ export default class LocalAdd extends Component {
     const { name, value } = event.target
     this.setState({ [name]: value }, this.checkSave)
   }
-  handleSave = () => {
+  handleSave = async () => {
     this.setState({save:false})
     let token = localStorage.getItem('access_token')
-    fetch('/dio',{
-      method: 'POST',
-      headers: {
-        Authorization: 'Bearer ' + token,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        nome: this.state.nome, 
-        observacao: this.state.observacao, 
-        local_id: this.props.currentLocal, 
-        quantidade_portas: this.state.quantidadePortas})
-    }).then(res => {
-      if (res.status == 401) {
-        console.log(token)
-        this.props.refreshToken();
-        this.handleSave();
-        return null;
-      }else if(res.status != 200){
-        console.log(res.json())
-        this.setState({nameError:true})
-        return null
-      }else{
-        return res.json();
-      }
-    }).then( data => {
-      console.log(data)
-      if (!data){
-        return null
-      }
-      this.props.fetch()
-      return null;
-    });
+    let res = await postDio(this.props.currentLocal, this.state.nome, this.state.observacao, this.state.quantidadePortas);
+    if (res === 401) {
+      await this.props.refreshToken();
+      res = await postDio(this.props.currentLocal, this.state.nome, this.state.observacao, this.state.quantidadePortas);
+    }
+    this.props.fetch();
   }
 
   render() {

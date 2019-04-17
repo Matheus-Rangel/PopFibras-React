@@ -2,9 +2,10 @@ import React, { Component } from 'react';
 import PropTypes, { number } from 'prop-types';
 import List from '@material-ui/core/List';
 import { withStyles } from '@material-ui/core/styles';
-import Dio from './Dio'
+import Dio from './Dio';
 import DioAdd from './DioAdd';
 import { ListSubheader } from '@material-ui/core';
+import {getLocal} from '../../services/FetchLocal';
 const styles = theme => ({
 });
 class Dios extends Component {
@@ -14,39 +15,13 @@ class Dios extends Component {
       data: null,
     }
   }
-  fetchDios = () => {
-    let token = localStorage.getItem('access_token')
-    fetch('/local?id='+this.props.currentLocal,{
-      headers: {
-        Authorization : 'Bearer '+ token
-      },
-    }).then(res => {
-      if (res.status == 401) {
-        console.log(token)
-        this.props.refreshToken().then((success) => (success ? this.fetchDios() : null));
-        return null;
-      }else if(res.status == 500){
-        return null
-      }else{
-        return res.json();
-      }
-    }).then( data => {
-      console.log(data)
-      if (!data){
-        return null
-      }
-      data.dios.sort((a,b) => {
-        if (a.nome > b.nome) {
-          return 1;
-        }
-        if (a.nome < b.nome) {
-          return -1;
-        }
-        return 0;
-      })
-      this.setState({data:data});
-      return null;
-    });
+  fetchDios = async () => {
+    let data = await getLocal(this.props.currentLocal);
+    if (!data) {
+      await this.props.refreshToken();
+      data = await getLocal(this.props.currentLocal);
+    }
+    this.setState({data:data});
   }
   componentDidMount(){
     if (this.props.currentLocal){

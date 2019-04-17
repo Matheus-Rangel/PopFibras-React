@@ -1,41 +1,20 @@
-import React, { Component } from 'react'
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import {
   Button, Dialog, DialogTitle,
   DialogContent, DialogContentText, DialogActions
 } from '@material-ui/core';
-export default class DeleteDialog extends Component {
+import {deleteEstado} from '../../services/FetchEstado';
 
-  handleDelete = () => {
-    this.setState({ save: false })
-    let token = localStorage.getItem('access_token')
-    fetch('/estado-link', {
-      method: 'DELETE',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({id:this.props.id})
-    }).then(res => {
-      if (res.status == 401) {
-        this.props.refreshToken().then((data) => (data && this.handleDelete()));
-        return null;
-      } else if (res.status != 200) {
-        console.log(res)
-        this.setState({ incorrectPassword: true })
-        return null
-      } else {
-        return res.json();
-      }
-    }).then(data => {
-      console.log(data)
-      if (!data) {
-        return null
-      }
-      this.props.onClose()
-      this.props.fetch()
-      return null;
-    });
+export default class DeleteDialog extends Component {
+  handleDelete = async () => {
+    let res = await deleteEstado(this.props.id);
+    if (res.status == 401) {
+        await this.props.refreshToken();
+        await deleteEstado(this.props.id);
+    }
+    this.props.onClose()
+    this.props.fetch()
   }
 
   render() {

@@ -7,7 +7,8 @@ import {
   DialogTitle, DialogContent, DialogContentText,
   DialogActions, Checkbox, TextField, Button, IconButton, Typography, MenuItem, Select, FormControl, InputLabel,
 } from '@material-ui/core';
-import SelectInput from '@material-ui/core/Select/SelectInput';
+import SelectEstado from './Select/SelectEstado';
+
 
 const styles = theme => ({
   gridWrapper: {
@@ -34,19 +35,15 @@ class TabelaPortaRow extends Component {
     super(props)
     this.state = {
       open: false,
-      portaDestino: this.props.data.porta_destino,
-      portaBypass: this.props.data.porta_bypass,
+      localDestinoId: this.props.data.porta_destino.dio.local.id, 
+      dioDestinoId : this.props.data.porta_destino.dio.id,
+      dioBypassId: this.props.data.porta_bypass.dio.id,
+      portaBypassId: this.props.data.porta_bypass.id,
       switchPorta: this.props.data.switch_porta,
-      estado: this.props.data.estado_link,
+      estado: this.props.data.estado_link.id,
       observacao: this.props.data.observacao,
-      cabo: this.props.data.fibra_cabo,
+      caboId: this.props.data.fibra_cabo.id,
       numero: this.props.data.numero_porta,
-
-      cabos: [],
-      estados: [],
-      locais: [],
-      dios: [],
-      portas: [],
     }
   }
 
@@ -63,11 +60,8 @@ class TabelaPortaRow extends Component {
     this.setState({ open: false })
   }
 
-  handleEstadoChange = (event) => {
-    const { value } = event.target;
-    const { estados } = this.state;
-    const i = estados.map((estado) => (estado.id)).indexOf(value)
-    this.setState({ estado: estados[i] })
+  handleChange = (event) => {
+    this.setState({ [event.target.name]: event.target.value })
   }
   render() {
     const { portaDestino,
@@ -76,8 +70,7 @@ class TabelaPortaRow extends Component {
       estado,
       observacao,
       cabo,
-      numero,
-      estados } = this.state;
+      numero,} = this.state;
     const { classes } = this.props;
     const locais = [];
     const dios = [];
@@ -112,27 +105,18 @@ class TabelaPortaRow extends Component {
           open={this.state.open}
           onClose={this.handleClose}
           aria-labelledby="form-dialog-title"
-          fullScreen
+          fullWidth
+          maxWidth='md'
         >
           <DialogTitle id="form-dialog-title">Porta - {numero}</DialogTitle>
           <DialogContent className={classes.detailBox}>
             
             <FormControl>
               <InputLabel>Estado de Link</InputLabel>
-              <Select
-                value={estado ? estado.id : 0}
+              <SelectEstado 
+                value={estado ? estado.id : 0} 
                 onChange={this.handleChange}
-                inputProps={{
-                  name: 'estado',
-                }}
-              >
-                {estados.map((e) => (
-                  <MenuItem key={e.id} value={e.id}>
-                    <DonutLargeIcon sytle={{color: e ? e.cor : '' , marginRight: '1rem'}} />
-                    <em>e.nome</em>
-                  </MenuItem>
-                ))}
-              </Select>
+              />
             </FormControl>
 
             <FormControl>

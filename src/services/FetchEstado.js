@@ -38,3 +38,32 @@ export async function patchEstado(id, nome, observacao, cor){
   }
   return res.status;
 }
+
+export async function deleteEstado(id){
+  const token = localStorage.getItem('access_token');
+  const res = await fetch('/estado-link',{
+    method: 'DELETE',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({id: id})
+  });
+  return res.status;
+}
+
+export async function postEstado(nome, observacao, cor){
+  const token = localStorage.getItem('access_token');
+  const res = await fetch('/estado-link',{
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ nome: nome, observacao: observacao, cor:cor})
+  });
+  if (res.status != 200){
+    console.log(await res.json());
+  }
+  return res.status;
+}
