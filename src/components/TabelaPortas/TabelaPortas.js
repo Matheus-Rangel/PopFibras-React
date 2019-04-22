@@ -5,6 +5,7 @@ import { Table, Typography, Paper, TableBody } from '@material-ui/core';
 import TabelaPortasToolbar from './TabelaPortasToolbar';
 import TabelaPortasHead from './TabelaPortasHead';
 import TabelaPortasRow from './TabelaPortaRow';
+import {getDio} from '../../services/FetchDio';
 const styles = theme => ({
   root : {
     width: '100%',
@@ -72,34 +73,16 @@ class TabelaPortas extends Component {
     this.setState({ selected: newSelected });
   };
 
-  isSelected = id => this.state.selected.map((porta)=> (porta.id)).indexOf(id) !== -1;
+  isSelected = (id) => this.state.selected.map((porta)=> (porta.id)).indexOf(id) !== -1;
   
-  async fetchData(id){
-    let token = localStorage.getItem('access_token')
-    let data = await fetch('/dio?id='+ id,{
-      headers: {
-        Authorization : 'Bearer '+ token
-      }
-    }).then(res => {
-      if (res.status == 401) {
-        console.log(token)
-        this.props.refreshToken().then(this.fetchData);
-        return null;
-      }else if(res.status != 200){
-        console.log(res)
-        console.log(res.json())
-        return null
-      }else{
-        return res.json();
-      }
-    }).then( data => {
-      if (!data){
-        return null
-      }
-      this.setState({data:data})
-      return data
-    });
-    return data
+  fetchData = async (id) => {
+    let data = await getDio(id)
+    if (!data) {
+      await this.props.refreshToken().then(this.fetchData);
+      data = await getDio(id)
+    }
+    console.log(data)
+    this.setState({data:data})
   }
 
   componentDidMount(){

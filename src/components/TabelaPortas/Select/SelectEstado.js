@@ -33,18 +33,19 @@ export default class SelectEstado extends Component {
           name: 'estadoId',
         }}
       >
-      {this.state.loading ? 
+      {this.state.data ? 
+        this.state.data.map((e) => (
+          <MenuItem key={e.id} value={e.id}>
+            <DonutLargeIcon style={{color: e.cor, marginRight: '0.5rem'}} />
+            <em>{e.nome}</em>
+          </MenuItem>))
+        :
         <MenuItem>
           <LinearProgress 
           variant='query'
           />
         </MenuItem>
-        : this.state.data.map((e) => (
-          <MenuItem key={e.id} value={e.id}>
-            <DonutLargeIcon style={{color: e.cor, marginRight: '0.5rem'}} />
-            <em>{e.nome}</em>
-          </MenuItem>
-        ))}
+        }
       </Select>
     )
   }

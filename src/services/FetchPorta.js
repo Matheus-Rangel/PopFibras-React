@@ -19,12 +19,27 @@ export async function pacthPorta(id, estado_id, destino_id, bypass_id, cabo_id, 
   }
   return res.status
 }
-export async function addCaboPortas(portas, cabo_id){
-  let i = portas.length;
-  while(i--){
-    portas[i]
-  }
-}
-export async function addEstadoPortas(portas, estado_id){
+// export async function addCaboPortas(portas, cabo_id){
+//   let i = portas.length;
+//   while(i--){
+//     portas[i]
+//   }
+// }
+// export async function addEstadoPortas(portas, estado_id){
 
+// }
+export async function getPortas(dioId){
+  const token = localStorage.getItem('access_token');
+  const res = await fetch(`/dio?id=${dioId}`,{
+    method: 'GET',
+    headers: {
+      Authorization : 'Bearer '+ token
+    },
+  });
+  if (res.status !== 200){
+    console.log(await res.json());
+    return null;
+  }
+  const data = await res.json();
+  return data.portas;
 }

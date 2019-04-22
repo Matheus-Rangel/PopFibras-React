@@ -8,7 +8,6 @@ import {deleteCabo} from '../../services/FetchCabo';
 export default class DeleteDialog extends Component {
 
   handleDelete = async () => {
-    const token = localStorage.getItem('access_token');
     let res = await deleteCabo(this.props.id);
     if (res === 401){
       this.props.refreshToken();
