@@ -1,6 +1,6 @@
 export async function getDios(localId=null, shrink=false){
   const token = localStorage.getItem('access_token');
-  const url = localId ? `/dios?local_id=${localId}` : '/dios';
+  let url = localId ? `/dios?local_id=${localId}` : '/dios';
   if (shrink){
     url = url + (localId ? '&shrink=1' : '?shrink=1');
   }

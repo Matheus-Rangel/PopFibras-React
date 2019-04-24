@@ -33,11 +33,15 @@ export default class SelectEstado extends Component {
           name: 'estadoId',
         }}
       >
+        <MenuItem value={0}>
+          <DonutLargeIcon />
+          <div style={{color:'#888', display:'inline-block', margin:'0px 0px 0px 5px', transform: 'translateY(-5px)'}}>Desabilitado</div>
+        </MenuItem>
       {this.state.data ? 
         this.state.data.map((e) => (
           <MenuItem key={e.id} value={e.id}>
             <DonutLargeIcon style={{color: e.cor, marginRight: '0.5rem'}} />
-            <em>{e.nome}</em>
+            <div style={{color:'#333', display:'inline-block', margin:'0px 0px 0px 5px', transform: 'translateY(-5px)'}}>{e.nome}</div>
           </MenuItem>))
         :
         <MenuItem>

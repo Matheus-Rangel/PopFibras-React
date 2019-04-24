@@ -78,7 +78,7 @@ class TabelaPortas extends Component {
   fetchData = async (id) => {
     let data = await getDio(id)
     if (!data) {
-      await this.props.refreshToken().then(this.fetchData);
+      await this.props.refreshToken();
       data = await getDio(id)
     }
     console.log(data)
@@ -126,6 +126,8 @@ class TabelaPortas extends Component {
                       data={porta}
                       handleSelectClick={this.handleSelectClick}
                       isSelected={this.isSelected(porta.id)}
+                      localId={this.state.data.local.id}
+                      refreshToken={this.props.refreshToken}
                     />
                   )}
                 </TableBody>

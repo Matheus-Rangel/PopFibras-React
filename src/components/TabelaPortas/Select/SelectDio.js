@@ -27,11 +27,11 @@ export default class SelectDio extends Component {
   }
   componentDidUpdate(prevProps) {
     if (prevProps.localId != this.props.localId && this.props.localId) {
+      console.log(this.props.localId)
       this.fetchData();
     }
   }
   render() {
-    console.log(this.state)
     return (
       <Select
         localId={this.state.localDestinoId}

@@ -82,6 +82,8 @@ class TabelaPortaRow extends Component {
           data={this.props.data}
           open={this.state.open}
           onClose={this.handleClose}
+          localId={this.props.localId}
+          refreshToken={this.props.refreshToken}
         />
       </React.Fragment>
     )

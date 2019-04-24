@@ -14,7 +14,8 @@ import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import ListItems from './ListItems';
-import Account from '../Account'
+import Account from '../Account';
+
 const drawerWidth = 240;
 
 const styles = theme => ({
@@ -89,7 +90,15 @@ const styles = theme => ({
       left: theme.spacing.unit * 9,
       padding: theme.spacing.unit * 3,
     },
+    transition: theme.transitions.create('left', {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.leavingScreen,
+    }),
     zIndex: 0,
+  },
+  contentOpen: {
+    left: drawerWidth,
+    maxWidth: `calc(100% - ${drawerWidth}px)`,
   },
   chartContainer: {
     marginLeft: -22,
@@ -124,7 +133,7 @@ const styles = theme => ({
 
 class Dashboard extends React.Component {
   state = {
-    open: false,
+    open: true,
   };
 
   handleDrawerOpen = () => {
@@ -182,12 +191,13 @@ class Dashboard extends React.Component {
             </IconButton>
           </div>
           <Divider />
+          <Divider />
           <List>
             <ListItems handleClick={this.props.toggleDrawer}/>
           </List>
         </Drawer>
-        <div className={classNames(classes.overlayBack, this.state.open && classes.overlayBackActive)} onClick={this.handleDrawerClose} />
-        <main className={classes.content}>
+        {/* <div className={classNames(classes.overlayBack, this.state.open && classes.overlayBackActive)} onClick={this.handleDrawerClose} /> */}
+        <main className={classNames({[classes.content]: true, [classes.contentOpen]: this.state.open})}>
           {this.props.children}
         </main>
       </div>
