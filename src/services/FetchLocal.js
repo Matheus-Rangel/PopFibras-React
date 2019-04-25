@@ -11,16 +11,7 @@ export async function getLocais(shrink=false){
     return null;
   }
   const data = await res.json();
-  data.locais.sort((a,b) => {
-    if (a.nome > b.nome) {
-      return 1;
-    }
-    if (a.nome < b.nome) {
-      return -1;
-    }
-    return 0;
-  });
-  return data;
+  return {status:res.status, data:data};
 }
 export async function getLocal(id){
   const token = localStorage.getItem('access_token');

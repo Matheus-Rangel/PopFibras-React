@@ -1,5 +1,4 @@
-export async function refreshAccessToken(){
-  const refreshToken = localStorage.getItem('refresh_token');
+export async function refreshAccessToken(refreshToken){
   if (!refreshToken) {
     return 401;
   }
@@ -9,12 +8,12 @@ export async function refreshAccessToken(){
       headers: {
         'Authorization': 'Bearer '.concat(refreshToken)
       }
-    })
+    });
+  let data = null;
   if (res.status === 200) {
-    const data = await res.json();
-    localStorage.setItem('access_token', data.access_token);
+    data = await res.json();
   }
-  return res.status;
+  return {status: res.status, data:data};
 }
 
 export async function getAccessToken(username, password){
@@ -26,11 +25,9 @@ export async function getAccessToken(username, password){
       method: 'POST',
       body: JSON.stringify({ username: username, password: password })
     });
+    let data = null
     if (res.status === 200) {
-      const data = await res.json()
-      localStorage.setItem('access_token', data.access_token);
-      localStorage.setItem('username', data.username);
-      localStorage.setItem('refresh_token', data.refresh_token);
+      data = await res.json()
     }
-    return res.status;
+    return {status: res.status, data:data};
 }
