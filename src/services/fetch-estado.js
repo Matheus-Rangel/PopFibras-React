@@ -1,5 +1,4 @@
-export async function getEstados(){
-  const token = localStorage.getItem('access_token');
+export async function apiGetEstados(token){
   const res = await fetch('/estados-link',{
     headers: {
       Authorization : 'Bearer '+ token
@@ -23,7 +22,7 @@ export async function getEstados(){
     });
   return data;
 }
-export async function patchEstado(id, nome, observacao, cor){
+export async function apiPatchEstado(id, nome, observacao, cor){
   const token = localStorage.getItem('access_token');
   const res = await fetch('/estado-link',{
     method: 'PATCH',
@@ -39,7 +38,7 @@ export async function patchEstado(id, nome, observacao, cor){
   return res.status;
 }
 
-export async function deleteEstado(id){
+export async function apiDeleteEstado(id){
   const token = localStorage.getItem('access_token');
   const res = await fetch('/estado-link',{
     method: 'DELETE',
@@ -52,7 +51,7 @@ export async function deleteEstado(id){
   return res.status;
 }
 
-export async function postEstado(nome, observacao, cor){
+export async function apiPostEstado(nome, observacao, cor){
   const token = localStorage.getItem('access_token');
   const res = await fetch('/estado-link',{
     method: 'POST',

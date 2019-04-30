@@ -1,5 +1,4 @@
-export async function getCabos(){
-  const token = localStorage.getItem('access_token');
+export async function getCabos(token){
   const res = await fetch('/cabos',{
     headers: {
       Authorization : 'Bearer '+ token
@@ -23,7 +22,7 @@ export async function getCabos(){
     });
   return data;
 }
-export async function patchCabo(id, nome, observacao, quantidadeFibras){
+export async function patchCabo(token, id, nome, observacao, quantidadeFibras){
   const token = localStorage.getItem('access_token');
   const res = await fetch('/cabo',{
       method: 'PATCH',
@@ -38,7 +37,7 @@ export async function patchCabo(id, nome, observacao, quantidadeFibras){
     }
     return res.status;
 }
-export async function deleteCabo(id){
+export async function deleteCabo(token, id){
   const token = localStorage.getItem('access_token');
   const res = await fetch('/cabo', {
     method: 'DELETE',
@@ -54,7 +53,7 @@ export async function deleteCabo(id){
   return res.status;
 }
 
-export async function postCabo(nome, observacao, quantidadeFibras){
+export async function postCabo(token, nome, observacao, quantidadeFibras){
   const token = localStorage.getItem('access_token');
   const res = await fetch('/cabo', {
     method: 'POST',
