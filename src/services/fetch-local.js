@@ -1,46 +1,27 @@
-export async function getLocais(shrink=false){
-  const token = localStorage.getItem('access_token');
-  const url = shrink ? '/locais?shrink=1' : '/locais';
+export async function apiGetLocais(token){
+  const url = '/locais';
   const res = await fetch(url,{
     headers: {
       Authorization : 'Bearer '+ token
     }
   });
-  if (res.status !== 200) {
-    console.log(res)
-    return null;
-  }
   const data = await res.json();
   return {status:res.status, data:data};
 }
-export async function getLocal(id){
-  const token = localStorage.getItem('access_token');
+
+export async function apiGetLocal(token, id){
   const url = `/local?id=${id}`;
   const res = await fetch(url,{
     headers: {
       Authorization : 'Bearer '+ token
     }
   });
-  if (res.status !== 200) {
-    console.log(res)
-    return null;
-  }
   const data = await res.json();
-  data.dios.sort((a,b) => {
-    if (a.nome > b.nome) {
-      return 1;
-    }
-    if (a.nome < b.nome) {
-      return -1;
-    }
-    return 0;
-  });
-  return data;
+  return {status:res.status, data:data};
 }
 
-export async function patchLocal(id, nome, observacao){
-  const token = localStorage.getItem('access_token')
-  const res = fetch('/local',{
+export async function apiPatchLocal(token, id, nome, observacao){
+  const res = await fetch('/local',{
     method: 'PATCH',
     headers: {
       Authorization: 'Bearer ' + token,
@@ -48,15 +29,11 @@ export async function patchLocal(id, nome, observacao){
     },
     body: JSON.stringify({ id: id, nome: nome, observacao: observacao })
   });
-  if (res.status !== 200) {
-      console.log(await res);
-      return null;
-  }
-  return await res.json();
+  const data = await res.json();
+  return {status:res.status, data:data};
 }
 
-export async function deleteLocal(id, password){
-  const token = localStorage.getItem('access_token');
+export async function apiDeleteLocal(token, id, password){
   const res = await fetch('/local',{
     method: 'DELETE',
     headers: {
@@ -65,11 +42,11 @@ export async function deleteLocal(id, password){
     },
     body: JSON.stringify({ password: password, id: id})
   });
-  return res.status;
+  const data = await res.json();
+  return {status:res.status, data:data};
 }
 
-export async function postLocal(nome, observacao){
-  const token = localStorage.getItem('access_token');
+export async function apiPostLocal(token, nome, observacao){
   const res = await fetch('/local',{
     method: 'POST',
     headers: {
@@ -78,5 +55,6 @@ export async function postLocal(nome, observacao){
     },
     body: JSON.stringify({ nome: nome, observacao: observacao})
   });
-  return res.status;
+  const data = await res.json();
+  return {status:res.status, data:data};
 }

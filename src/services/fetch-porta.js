@@ -1,4 +1,4 @@
-export async function pacthPorta(id, estado_id, destino_id, bypass_id, cabo_id, switch_porta, observacao){
+export async function apiPatchPorta(id, estadoId, destinoId, bypassId, caboId, switchPorta, observacao){
   const token = localStorage.getItem('access_token');
   const res = await fetch('porta-dio',{
     method: 'PATCH',
@@ -7,39 +7,23 @@ export async function pacthPorta(id, estado_id, destino_id, bypass_id, cabo_id, 
     },
     body: JSON.stringify({ 
       id: id, 
-      estado_link_id: estado_id,
-      fibra_cabo_id: cabo_id,
-      porta_destino_id: destino_id,
-      porta_bypass_id: bypass_id,
-      switch_porta: switch_porta,
-      observacao: observacao })
+      estado_link_id: estadoId,
+      fibra_cabo_id: caboId,
+      porta_destino_id: destinoId,
+      porta_bypass_id: bypassId,
+      switch_porta: switchPorta,
+      observacao: observacao})
   });
-  if (res.status !== 200){
-    console.log(await res.json())
-  }
-  return res.status
+  const data = res.json();
+  return {status: res.status, data: data};
 }
-// export async function addCaboPortas(portas, cabo_id){
-//   let i = portas.length;
-//   while(i--){
-//     portas[i]
-//   }
-// }
-// export async function addEstadoPortas(portas, estado_id){
-
-// }
-export async function getPortas(dioId){
-  const token = localStorage.getItem('access_token');
-  const res = await fetch(`/dio?id=${dioId}`,{
+export async function apiGetPortas(dioId){
+  const res = await fetch(`/portas?dio_id=${dioId}`,{
     method: 'GET',
     headers: {
       Authorization : 'Bearer '+ token
     },
   });
-  if (res.status !== 200){
-    console.log(await res.json());
-    return null;
-  }
   const data = await res.json();
-  return data.portas;
+  return {status: res.status, data: data};
 }

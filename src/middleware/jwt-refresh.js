@@ -11,7 +11,6 @@ export const jwt = store => next => action => {
     let theStore = store.getState();
     if (
       theStore.auth &&
-      theStore.auth.authToken &&
       theStore.auth.refreshToken
     ) {
       if (!theStore.auth.pendingRefreshingToken) {

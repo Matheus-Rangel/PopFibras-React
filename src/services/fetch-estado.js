@@ -4,26 +4,10 @@ export async function apiGetEstados(token){
       Authorization : 'Bearer '+ token
     }
   });
-  if (res.status === 401) {
-    return null;
-  }else if(res.status === 500){
-    console.log(res);
-    return null;
-  } 
   const data = await res.json();
-  data.estados.sort((a,b) => {
-    if (a.nome > b.nome) {
-      return 1;
-    }
-    if (a.nome < b.nome) {
-      return -1;
-    }
-      return 0;
-    });
-  return data;
+  return {status: res.status, data: data};
 }
-export async function apiPatchEstado(id, nome, observacao, cor){
-  const token = localStorage.getItem('access_token');
+export async function apiPatchEstado(token, id, nome, observacao, cor){
   const res = await fetch('/estado-link',{
     method: 'PATCH',
     headers: {
@@ -32,14 +16,11 @@ export async function apiPatchEstado(id, nome, observacao, cor){
     },
     body: JSON.stringify({ id: id, nome: nome, observacao: observacao, cor:cor})
   });
-  if(res.status === 500){
-    console.log(res);
-  }
-  return res.status;
+  const data = await res.json();
+  return {status: res.status, data: data};
 }
 
-export async function apiDeleteEstado(id){
-  const token = localStorage.getItem('access_token');
+export async function apiDeleteEstado(token, id){
   const res = await fetch('/estado-link',{
     method: 'DELETE',
     headers: {
@@ -48,10 +29,11 @@ export async function apiDeleteEstado(id){
     },
     body: JSON.stringify({id: id})
   });
-  return res.status;
+  const data = await res.json();
+  return {status: res.status, data: data};
 }
 
-export async function apiPostEstado(nome, observacao, cor){
+export async function apiPostEstado(token, nome, observacao, cor){
   const token = localStorage.getItem('access_token');
   const res = await fetch('/estado-link',{
     method: 'POST',
@@ -61,8 +43,6 @@ export async function apiPostEstado(nome, observacao, cor){
     },
     body: JSON.stringify({ nome: nome, observacao: observacao, cor:cor})
   });
-  if (res.status != 200){
-    console.log(await res.json());
-  }
-  return res.status;
+  const data = await res.json();
+  return {status: res.status, data: data};
 }

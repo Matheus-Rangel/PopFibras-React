@@ -2,18 +2,19 @@ import {invalidToken} from './auth-actions';
 import {apiGetEstados, apiPatchEstado, apiPostEstado, apiDeleteEstado} from '../services/fetch-estado';
 export const REQUESTING_ESTADOS = 'REQUESTING_ESTADOS';
 export const RECEIVE_ESTADOS = 'RECEIVE_ESTADOS';
-export const PUT_ESTADO = 'PUT_ESTADO';
-export const PUTTING_ESTADO = 'PUTTING_ESTADO';
+export const POST_ESTADO = 'POST_ESTADO';
+export const POSTING_ESTADO = 'POSTING_ESTADO';
+export const PATCH_ESTADO = 'PATCH_ESTADO';
+export const PATCHING_ESTADO = 'PATCHING_ESTADO';
 export const DELETE_ESTADO = 'DELETE_ESTADO';
 export const DELETING_ESTADO = 'DELETING_ESTADO';
 export const INVALIDADE_ESTADOS = 'INVALIDATE_ESTADOS';
 
 export const invalidateEstado = () => ({
   type: INVALIDADE_ESTADOS,
-})
-export const requestingEstados = (estados) => ({
+});
+export const requestingEstados = () => ({
   type: REQUESTING_ESTADOS,
-  payload: estados,
 });
 
 export const receiveEstados = (estados) => ({
@@ -23,7 +24,7 @@ export const receiveEstados = (estados) => ({
 
 export const requestEstados = () => (dispatch, getState) => {
   const state = getState();
-  if (state.portas.isFetching){
+  if (state.estados.isFetching){
     return
   }
   return apiGetEstados(state.auth.accessToken).then(res => {
@@ -34,47 +35,56 @@ export const requestEstados = () => (dispatch, getState) => {
       }
   });
 }
-export const puttingEstado = () => ({
-  type: PUTTING_ESTADO,
+export const patchingEstado = () => ({
+  type: PATCHING_ESTADO,
 });
-export const putEstado = (estado) => ({
-  type: PUT_ESTADO,
+export const patchEstado = (estado) => ({
+  type: PATCH_ESTADO,
   payload: estado,
 });
-
-export const createEstado = (estado) => dispatch => {
-  dispatch(puttingEstado())
-  return apiPostEstado(estado.nome, estado.observacao, estado.cor).then(res => {
+export const postingEstado = () => ({
+  type: POSTING_ESTADO,
+});
+export const postEstado = (estado) => ({
+  type: POST_ESTADO,
+  payload: estado,
+});
+export const createEstado = (nome, observacao, cor) => (dispatch, getState) => {
+  const state = getState()
+  dispatch(postingEstado())
+  return apiPostEstado(state.auth.accessToken, nome, observacao, cor).then(res => {
     if(res.state !== 200){
       return dispatch(invalidToken())
     }
-    return dispatch(putEstado(res.data))
+    return dispatch(postEstado(res.data))
   });
 };
-export const updateEstado = (estado) => dispatch => {
-  dispatch(puttingEstado())
-  return apiPatchEstado(estado.id, estado.nome, estado.observacao, estado.cor).then(res => {
+export const updateEstado = (id, nome, observacao, cor ) => (dispatch, getState) => {
+  const state = getState()
+  dispatch(patchingEstado())
+  return apiPatchEstado(state.auth.accessToken, id, nome, observacao, cor).then(res => {
     if(res.state !== 200){
       return dispatch(invalidToken())
     }
-    return dispatch(putEstado(res.data))
+    return dispatch(patchEstado(res.data))
   });
 };
 
-export const deleteEstado = (estado) => ({
+export const _deleteEstado = (id) => ({
   type: DELETE_ESTADO,
-  payload: estado,
+  payload: id,
 });
-export const deletingEstado = (estado) => ({
+export const deletingEstado = (id) => ({
   type: DELETING_ESTADO,
-  payload: estado,
+  payload: id,
 })
-export const deleteEstado = (estado) => dispatch => {
-  dispatch(deletingEstado(estado))
-  return apiDeleteEstado(estado.id).then(res => {
+export const deleteEstado = (id) => (dispatch, getState) => {
+  const state = getState()
+  dispatch(deletingEstado(id))
+  return apiDeleteEstado(state.auth.accessToken, id).then(res => {
     if(res.state !== 200){
       return dispatch(invalidToken())
     }
-    return dispatch(deleteEstado(estado))
+    return dispatch(_deleteEstado(id))
   });
 };
