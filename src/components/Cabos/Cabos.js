@@ -1,7 +1,8 @@
-import React, { Component } from 'react'
+import React, { Component } from 'react';
 import { List } from '@material-ui/core';
-import CaboAdd from './CaboAdd'
-import Cabo from './Cabo'
+import CaboAdd from './CaboAdd';
+import Cabo from './Cabo';
+import {getCabos} from '../../services/FetchCabo';
 class Cabos extends Component {
   constructor(props){
     super(props);
@@ -9,51 +10,31 @@ class Cabos extends Component {
       data: null,
     }
   }
-  fetchCabos = () => {
-    let token = localStorage.getItem('access_token')
-    fetch('/cabos',{
-      headers: {
-        Authorization : 'Bearer '+ token
-      }
-    }).then(res => {
-      if (res.status == 401) {
-        this.props.refreshToken();
-        this.fetchCabos();
-        return null;
-      }else if(res.status == 500){
-        console.log(res)
-        return null
-      }else{
-        return res.json();
-      }
-    }).then( data => {
-      if (!data){
-        return null
-      }
-      data.cabos.sort((a,b) => {
-        if (a.nome > b.nome) {
-          return 1;
-        }
-        if (a.nome < b.nome) {
-          return -1;
-        }
-        return 0;
-      })
-      this.setState({data:data});
-      return null;
-    });
+  fetchData = async () => {
+    let res = await getCabos(); 
+    if (!res) {
+      await this.props.refreshToken();
+      res = await getCabos();
+    }
+    this.setState({data:res});
   }
+
   componentDidMount(){
-    this.fetchCabos()
+    this.fetchData()
   }
   render() {
     return (
       <List>
         { this.state.data &&
           this.state.data.cabos.map(cabo => 
-          (<Cabo refreshToken={this.props.refreshToken} key={cabo.id} data={cabo} fetch={this.fetchCabos}/>))
+          (<Cabo 
+            refreshToken={this.props.refreshToken} 
+            key={cabo.id} 
+            data={cabo} 
+            list={this.state.data.cabos} 
+            fetch={this.fetchData}/>))
         }
-        <CaboAdd refreshToken={this.props.refreshToken} fetch={this.fetchCabos} data={this.state.data}/>
+        <CaboAdd refreshToken={this.props.refreshToken} fetch={this.fetchData} list={this.state.data ? this.state.data.cabos : []} data={this.state.data}/>
       </List>
     )
   }

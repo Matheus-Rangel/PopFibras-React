@@ -12,13 +12,14 @@ import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
+import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import ListItems from './ListItems';
-import Account from '../Account'
+import Account from '../Account';
+
 const drawerWidth = 240;
 
 const styles = theme => ({
   root: {
-    display: 'flex',
   },
   toolbar: {
     paddingRight: 24, // keep right padding when drawer closed
@@ -56,7 +57,7 @@ const styles = theme => ({
     flexGrow: 1,
   },
   drawerPaper: {
-    position: 'absolute',
+    position: 'fixed',
     whiteSpace: 'nowrap',
     width: drawerWidth,
     height: '100%',
@@ -79,28 +80,34 @@ const styles = theme => ({
   },
   appBarSpacer: theme.mixins.toolbar,
   content: {
-    padding: theme.spacing.unit * 3,
+    padding: theme.spacing.unit * 1,
     overflow: 'auto',
-    position: 'fixed',
+    position: 'absolute',
+    maxWidth: `calc(100% - ${theme.spacing.unit * 7}px)`,
     top: theme.spacing.unit * 7,
     left: theme.spacing.unit * 7,
     [theme.breakpoints.up('sm')]: {
       left: theme.spacing.unit * 9,
+      padding: theme.spacing.unit * 3,
     },
-    display: 'grid',
-    zIndex: 0
+    transition: theme.transitions.create('left', {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.leavingScreen,
+    }),
+    zIndex: 0,
+  },
+  contentOpen: {
+    left: drawerWidth,
+    maxWidth: `calc(100% - ${drawerWidth}px)`,
   },
   chartContainer: {
     marginLeft: -22,
-  },
-  tableContainer: {
-    height: 320,
   },
   h5: {
     marginBottom: theme.spacing.unit * 2,
   },
   overlayBack: {
-    position: 'absolute',
+    position: 'fixed',
     top: 0,
     left: 0,
     width: '100%',
@@ -126,7 +133,7 @@ const styles = theme => ({
 
 class Dashboard extends React.Component {
   state = {
-    open: false,
+    open: true,
   };
 
   handleDrawerOpen = () => {
@@ -179,17 +186,18 @@ class Dashboard extends React.Component {
           open={this.state.open}
         >
           <div className={classes.toolbarIcon}>
-            <IconButton onClick={this.handleDrawerClose}>
-              <ChevronLeftIcon />
+            <IconButton onClick={this.state.open ? this.handleDrawerClose : this.handleDrawerOpen}>
+              {this.state.open ? <ChevronLeftIcon /> : <ChevronRightIcon />}
             </IconButton>
           </div>
+          <Divider />
           <Divider />
           <List>
             <ListItems handleClick={this.props.toggleDrawer}/>
           </List>
         </Drawer>
-        <div className={classNames(classes.overlayBack, this.state.open && classes.overlayBackActive)} onClick={this.handleDrawerClose} />
-        <main className={classes.content}>
+        {/* <div className={classNames(classes.overlayBack, this.state.open && classes.overlayBackActive)} onClick={this.handleDrawerClose} /> */}
+        <main className={classNames({[classes.content]: true, [classes.contentOpen]: this.state.open})}>
           {this.props.children}
         </main>
       </div>

@@ -2,18 +2,18 @@ import React, { Component } from 'react'
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
-import AddLocationIcon from '@material-ui/icons/AddLocation';
+import AddIcon from '@material-ui/icons/Add';
 import { Collapse, Grid, TextField, Button, Divider } from '@material-ui/core';
 import ExpandLess from '@material-ui/icons/ExpandLess';
 import ExpandMore from '@material-ui/icons/ExpandMore';
-import {postLocal} from '../../services/FetchLocal';
-
+import {postDio} from '../../services/FetchDio';
 export default class LocalAdd extends Component {
   constructor(props) {
     super(props);
     this.state = {
       nome: '',
       observacao: '',
+      quantidadePortas: '',
       open: false,
       save: false,
       nameError: false,
@@ -24,7 +24,9 @@ export default class LocalAdd extends Component {
   }
   checkSave = () => {
     if(this.state.nome != '' &&
-    !this.props.list.find((local) => (local.nome == this.state.nome ))){
+    !this.props.list.find((dio) => (dio.nome == this.state.nome )) &&
+    this.state.quantidadePortas > 0
+    ){
       this.setState({save: true})
     }else{
       this.setState({save:false})
@@ -34,19 +36,15 @@ export default class LocalAdd extends Component {
     const { name, value } = event.target
     this.setState({ [name]: value }, this.checkSave)
   }
-  handleSave = async() => {
-    this.setState({save:false});
-    let res = await postLocal(this.state.nome, this.state.observacao);
-    if (res === 401){
+  handleSave = async () => {
+    this.setState({save:false})
+    let token = localStorage.getItem('access_token')
+    let res = await postDio(this.props.currentLocal, this.state.nome, this.state.observacao, this.state.quantidadePortas);
+    if (res === 401) {
       await this.props.refreshToken();
-      res = await postLocal(this.state.nome, this.state.observacao);
+      res = await postDio(this.props.currentLocal, this.state.nome, this.state.observacao, this.state.quantidadePortas);
     }
-    if(res !== 200){
-      console.log(res)
-      this.setState({nameError:true})
-      return null
-    }
-    this.props.fetch()
+    this.props.fetch();
   }
 
   render() {
@@ -54,10 +52,10 @@ export default class LocalAdd extends Component {
       <React.Fragment>
         <ListItem button onClick={this.handleClick}>
           <ListItemIcon>
-            <AddLocationIcon />
+            <AddIcon />
           </ListItemIcon>
           <ListItemText>
-            Adicionar Local
+            Adicionar DIO
         </ListItemText>
         {this.state.open ? <ExpandLess /> : <ExpandMore/>}
         </ListItem>
@@ -85,6 +83,15 @@ export default class LocalAdd extends Component {
                 />
               </Grid>
               <Grid item lg={3}>
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  label="Quantidade de Portas"
+                  name="quantidadePortas"
+                  value={this.state.quantidadePortas}
+                  onChange={this.handleInput}
+                  required={true}
+                />
               </Grid>
               <Grid item>
                 <Button color='primary' disabled={!this.state.save} onClick={this.handleSave} variant='contained'>

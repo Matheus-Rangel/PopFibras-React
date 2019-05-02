@@ -12,6 +12,7 @@ import { withStyles, Divider, Paper } from '@material-ui/core';
 import { Redirect } from 'react-router-dom'
 import CircularProgress from '@material-ui/core/CircularProgress';
 
+import {getAccessToken} from '../../services/AccessToken';
 const styles = theme => ({
   background: {
     position: 'absolute',
@@ -53,7 +54,6 @@ class Login extends Component {
     incorrectCredencials: false,
     serverError: false,
     loading: false,
-    isLoggedIn: false,
   }
   handleChange = event => {
     this.setState({
@@ -68,48 +68,21 @@ class Login extends Component {
       loading: true,
       serverError: false,
       incorrectCredencials: false,
-    })
-    fetch('/login',
-      {
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        method: 'POST',
-        body: JSON.stringify({ username: this.state.username, password: this.state.password })
+    });
+    getAccessToken(this.state.username, this.state.password).then(
+      res => {
+        if (res === 200){
+          this.props.history.push('/')
+        }else if(res === 401){
+          this.setState({loading: false, incorrectCredencials: true, serverError: false})
+        }else{
+          this.setState({loading: false, serverError: true, incorrectCredencials: false})
+        }
       }
-    ).then(res => {
-      console.log(res.status)
-      this.setState({loading: false})
-      if (res.status == 200) {
-        this.setState({ incorrectCredencials: false, serverError: false });
-        return res.json();
-      } else if (res.status == 401) {
-        this.setState({ incorrectCredencials: true });
-        return null;
-      }
-      else {
-        this.setState({ serverError: true });
-        console.log(res)
-        return null;
-      }
-    }
-    ).then(data => {
-      if (!data) {
-        return null
-      }
-      localStorage.setItem('username', data.username);
-      localStorage.setItem('access_token', data.access_token);
-      localStorage.setItem('refresh_token', data.refresh_token);
-      this.setState({ isLoggedIn: true })
-      return null
-    }
-    )
+    );
   }
   render() {
     const { classes } = this.props
-    if (this.state.isLoggedIn) {
-      return (<Redirect to='/' />)
-    }
     return (
       <React.Fragment>
         <div className={classes.background}></div>

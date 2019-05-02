@@ -1,12 +1,14 @@
 import React, { Component } from 'react'
 import ListItem from '@material-ui/core/ListItem'
 import ListItemText from '@material-ui/core/ListItemText'
-import {ListItemIcon, Divider, Button, TextField, Grid, }from '@material-ui/core';
-import ShortTextIcon from '@material-ui/icons/ShortText';
+import {ListItemIcon, Divider, Button, TextField, Grid, Checkbox }from '@material-ui/core';
 import ExpandLess from '@material-ui/icons/ExpandLess';
 import ExpandMore from '@material-ui/icons/ExpandMore';
 import Collapse from '@material-ui/core/Collapse';
 import DeleteDialog from './DeleteDialog';
+import Tooltip from '@material-ui/core/Tooltip';
+
+import {patchLocal} from '../../services/FetchLocal';
 
 export default class Local extends Component {
   constructor(props){
@@ -22,45 +24,31 @@ export default class Local extends Component {
   handleClick = () => {
     this.setState(state => ({open : !state.open}))
   }
-  handleInput = (event) => {
-    let name = event.target.name;
-    let value = event.target.value;
-    this.setState({[name]:value})
-    if (this.props.data[name] != value){
-      this.setState({save:true})
+  checkSave = () => {
+    if(this.state.nome != '' &&
+    this.state.nome != this.props.data.nome &&
+    !this.props.list.find((local) => (local.nome == this.state.nome && local.id != this.props.data.id))){
+      this.setState({save: true})
+    }else if(this.state.nome == this.props.data.nome && this.state.observacao != this.props.data.observacao){
+      this.setState({save: true})
     }else{
       this.setState({save:false})
     }
+    console.log(this.props.data)
   }
-  handleUpdate = () => {
+  handleInput = (event) => {
+    let name = event.target.name;
+    let value = event.target.value;
+    this.setState({[name]:value}, this.checkSave)
+  }
+  handleUpdate = async () => {
     this.setState({save:false})
-    let token = localStorage.getItem('access_token')
-    fetch('/local',{
-      method: 'PATCH',
-      headers: {
-        Authorization: 'Bearer ' + token,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ id: this.props.data.id, nome: this.state.nome, observacao: this.state.observacao })
-    }).then(res => {
-      if (res.status == 401) {
-        console.log(token)
-        this.props.refreshToken();
-        this.handleUpdate();
-        return null;
-      }else if(res.status == 500){
-        return null
-      }else{
-        return res.json();
-      }
-    }).then( data => {
-      console.log(data)
-      if (!data){
-        return null
-      }
-      this.props.fetch()
-      return null;
-    });
+    let data = await patchLocal(this.props.data.id, this.state.nome, this.state.observacao);
+    if (!data){
+      this.props.refreshToken();
+      data = await patchLocal(this.props.data.id, this.state.nome, this.state.observacao);
+    }
+    await this.props.fetch();
   }
   deleteDialog = () =>{
     this.setState(state => ({deleteDialog:!state.deleteDialog}))
@@ -68,12 +56,20 @@ export default class Local extends Component {
   render() {
     return (
       <div>
-        <ListItem button onClick={this.handleClick}>
+        <ListItem button style={{paddingBottom:0, paddingTop:0}}>
           <ListItemIcon>
-            <ShortTextIcon />
+            <Tooltip title="Selecionar" placement="bottom">
+              <Checkbox
+                checked={this.props.currentLocal == this.props.data.id}
+                onChange={this.props.setLocal}
+                value={this.props.data.id.toString()}
+              />
+            </Tooltip>
           </ListItemIcon>
-          <ListItemText>{this.props.data.nome}</ListItemText>
-          {this.state.open ? <ExpandLess /> : <ExpandMore/>}
+          <ListItemText style={{lineHeight: '48px'}} disableTypography onClick={this.handleClick}>
+            {this.props.data.nome}
+          </ListItemText>
+          {this.state.open ? <ExpandLess onClick={this.handleClick}/> : <ExpandMore onClick={this.handleClick}/>}
         </ListItem>
         <Divider/>
         <Collapse in={this.state.open} timeout="auto" unmountOnExit>
@@ -114,7 +110,8 @@ export default class Local extends Component {
           </ListItem>
           <Divider/>
         </Collapse>
-        <DeleteDialog 
+        <DeleteDialog
+          refreshToken={this.props.refreshToken}
           open={this.state.deleteDialog}
           onClose={this.deleteDialog}
           id={this.props.data.id}

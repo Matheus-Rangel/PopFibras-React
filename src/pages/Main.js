@@ -23,7 +23,7 @@ const styles = (theme) => ({
   }
 });
 
-class App extends Component {
+class Main extends Component {
   constructor(props){
     super(props)
     this.state = {

@@ -1,35 +1,32 @@
-import React, { Component } from 'react'
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import {TextField, Button, Dialog, DialogTitle,
-DialogContent, DialogContentText, DialogActions} from '@material-ui/core'; 
-
-import {deleteLocal} from '../../services/FetchLocal';
+DialogContent, DialogContentText, DialogActions} from '@material-ui/core';
+import {deleteDio} from '../../services/FetchDio';
 export default class DeleteDialog extends Component {
   constructor(props){
     super(props);
     this.state = {
       incorrectPassword: false,
       password: "",
-    }
+    };
   }
   handlePassword = (event) => {
     this.setState({password:event.target.value});
   }
 
   handleDelete = async () => {
-    this.setState({save:false})
-    await this.props.refreshToken();
-    let res = await deleteLocal(this.props.id, this.state.password);
-    console.log(res)
-    if (res === 401){
+    this.setState({save:false});
+    let res = await deleteDio(this.props.id, this.state.password);
+    if (res === 401) {
       await this.props.refreshToken();
-      res = await deleteLocal(this.props.id, this.state.password);
+      res = await deleteDio(this.props.id, this.state.password);
     }
-    if (res !== 200){
+    if(res === 403){
       this.setState({incorrectPassword:true});
-      return null
+      return null;
     }
-    this.props.onClose()
+    this.props.onClose();
     this.props.fetch()
   }
 
@@ -42,8 +39,8 @@ export default class DeleteDialog extends Component {
           <DialogTitle id="form-dialog-title">Deletar Local</DialogTitle>
           <DialogContent>
             <DialogContentText>
-              Ao deletar o local todas as informações sobre os DIOS presentes neste local também serão
-              deletadas. Para deletar um local é necessario confirmar a sua senha:
+              Ao deletar um DIO todas as informações contidas nas portas tambem serão deletadas.
+              Para deletar um DIO é necessario confirmar a sua senha:
             </DialogContentText>
             <TextField
               autoFocus
