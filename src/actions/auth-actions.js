@@ -1,7 +1,6 @@
 import {refreshAccessToken, getAccessToken, invalidateAccessToken, invalidateRefreshToken} from '../services/access-token';
 
-export const REFRESHED_TOKEN = 'AUTH_TOKEN_REFRESHED';
-export const TOKEN_REFRESING = 'AUTH_REFRESHING_TOKEN';
+export const REFRESHING_TOKEN_ = 'AUTH_REFRESHING_TOKEN';
 export const REFRESH_EXPIRED = 'AUTH_REFRESH_EXPIRED';
 export const INVALID_TOKEN = 'AUTH_INVALID_TOKEN';
 export const SET_REFRESH_TOKEN = 'AUTH_SET_REFRESH_TOKEN'
@@ -13,10 +12,6 @@ export const invalidToken = () => ({
 
 export const refreshExpired = () => ({
   type: REFRESH_EXPIRED
-})
-
-export const refreshedToken = () => ({
-  type: REFRESHED_TOKEN
 })
 
 export const refreshingToken = () => ({
@@ -33,12 +28,11 @@ export const setAccessToken = (accessToken) => ({
   accessToken,
 });
 
-export const tokenRefresh = () => (dispatch, getState) => {
+export const refreshToken = () => (dispatch, getState) => {
   dispatch(refreshingToken())
   return refreshAccessToken(getState().auth.refreshToken).then(res => {
     if (res.status == 200){
       dispatch(setAccessToken(res.data.accessToken))
-      dispatch(refreshedToken());
     }else{
       dispatch(refreshExpired());
     }
@@ -80,5 +74,6 @@ export const logout = () => (dispatch, getState) => {
   state = getState()
   invalidateAccessToken(state.auth.accessToken);
   invalidateRefreshToken(state.auth.refreshToken);
+  localStorage.removeItem(refreshToken);
   return dispatch({type:LOGOUT});
 }
