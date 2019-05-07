@@ -1,10 +1,10 @@
 import {
-  REQUESTING_CABOS, RECEIVE_CABOS,
-  POST_CABO, POSTING_CABO,
-  PATCH_CABO, PATCHING_CABO,
-  DELETE_CABO, DELETING_CABO,
-  INVALIDATE_CABOS
-} from '../actions/cabos-actions';
+  REQUESTING_ESTADOS, RECEIVE_ESTADOS,
+  POST_ESTADO, POSTING_ESTADO,
+  PATCH_ESTADO, PATCHING_ESTADO,
+  DELETE_ESTADO, DELETING_ESTADO,
+  INVALIDATE_ESTADOS
+} from '../actions/estado-actions';
 import {fromJS, set, merge, remove} from 'immutable';
 
 const initialState = fromJS({
@@ -14,51 +14,51 @@ const initialState = fromJS({
   deleting: false,
   itens: [],
 })
-export const cabos = (state = initialState, action) => {
+export const estados = (state = initialState, action) => {
   switch (action.type) {
-    case REQUESTING_CABOS:
+    case REQUESTING_ESTADOS:
       return set(state, 'requesting', true);
-    case  RECEIVE_CABOS:
+    case  RECEIVE_ESTADOS:
       return merge(state, {
         requesting: false,
         itens: action.payload,
         didInvalidate: false,
-      }) 
+      })
       
-    case POST_CABO:
-      let index = state.get('itens').findKey((cabo) => {
-        return cabo.nome > action.payload.nome
+    case POST_ESTADO:
+      let index = state.get('itens').findKey((estado) => {
+        return estado.nome > action.payload.nome
       })
       const itens = state.get('itens').insert(index, action.payload)
       return merge(state, {itens: itens, posting:false})
-    case POSTING_CABO:
+    case POSTING_ESTADO:
       return set(state, 'posting', true);
-    case PATCH_CABO:
+    case PATCH_ESTADO:
       let itens = state.get('itens')
-      let index = itens.findKey((cabo) => {
-        return cabo.id === action.payload.id
+      let index = itens.findKey((estado) => {
+        return estado.id === action.payload.id
       })
       remove(itens, index)
-      index = itens.findKey((cabo) => {
-        return cabo.nome > action.payload.nome
+      index = itens.findKey((estado) => {
+        return estado.nome > action.payload.nome
       })
       itens.insert(index, action.payload)
       return merge(state, {itens : itens, posting:false});
-    case PATCHING_CABO:
+    case PATCHING_ESTADO:
       return set(state, 'posting', true);
-    case DELETE_CABO:
+    case DELETE_ESTADO:
       const itens = state.get('itens')
-      const index = itens.findKey((cabo) => {
-        return cabo.id === action.payload
+      const index = itens.findKey((estado) => {
+        return estado.id === action.payload
       })
       return merge(state, {
         itens: remove(itens, index),
         deleting: false,
       })
-    case DELETING_CABO:
+    case DELETING_ESTADO:
       return set(state, 'deleting', true);
     
-      case INVALIDATE_CABOS:
+      case INVALIDATE_ESTADOS:
       return set(state, 'didInvalidate', true);
     default:
       return state

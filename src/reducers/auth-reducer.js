@@ -4,7 +4,8 @@ import {
   SET_ACCESS_TOKEN, REQUESTING_LOGIN,
   LOGIN_FAILURE, LOGIN_SUCCESS, LOGOUT
 } from '../actions/auth-actions';
-const initialState = {
+import {fromJS, set, merge} from 'immutable';
+const initialState = fromJS({
   refreshToken: '',
   accessToken: '',
   username: '',
@@ -15,54 +16,31 @@ const initialState = {
   requestingLogin: false,
   isLoggedIn: false,
   loginFailure: false,
-}
+});
+
 export const auth = (state = initialState, action) => {
   switch (action.type) {
     case REFRESHING_TOKEN:
-      return {
-        ...state,
-        refreshingToken:true
-      }
+      return set(state, 'refreshingToken', true);
     case REFRESH_EXPIRED:
-      return {
-        ...state,
+      return merge(state, {
         refreshExpired: true,
         refreshingToken: false,
-      }
+      });
     case INVALID_TOKEN:
-      return {
-        ...state,
-        invalidToken:true
-      }
+      return set(state, 'invalidToken', true);
     case SET_REFRESH_TOKEN:
-      return{
-        ...state,
-        refreshToken: action.refreshToken
-      }
+      return set(state, 'refreshToken', action.refreshToken);
     case SET_ACCESS_TOKEN:
-      return {
-        ...state,
-        accessToken:action.accessToken,
-      }
+      return set(state, 'accessToken', action.accessToken);
     case REQUESTING_LOGIN:
-      return {
-        ...state,
-        requestingLogin: true,
-      }
+      return set(state, 'requestingLogin', true);
     case LOGIN_SUCCESS:
-      return {
-        ...state,
-        isLoggedIn: true,
-      }
+      return set(state,'isLoggedIn', true);
     case LOGIN_FAILURE:
-      return {
-        ...state,
-        loginFailure: true,
-      }
+      return set(state, 'loginFailure', true);
     case LOGOUT:
-      return {
-        ...initialState
-      }
+      return merge(state, initialState);
     default:
       return state
   }

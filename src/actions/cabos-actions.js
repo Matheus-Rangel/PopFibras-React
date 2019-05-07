@@ -8,10 +8,10 @@ export const PATCH_CABO = 'PATCH_CABO';
 export const PATCHING_CABO = 'PATCHING_CABO';
 export const DELETE_CABO = 'DELETE_CABO';
 export const DELETING_CABO = 'DELETING_CABO';
-export const INVALIDADE_CABOS = 'INVALIDATE_CABOS';
+export const INVALIDATE_CABOS = 'INVALIDATE_CABOS';
 
-export const invalidateCabo = () => ({
-  type: INVALIDADE_CABOS,
+export const invalidateCabos = () => ({
+  type: INVALIDATE_CABOS,
 });
 export const requestingCabos = () => ({
   type: REQUESTING_CABOS,

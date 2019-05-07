@@ -9,10 +9,10 @@ export const PATCHING_DIO = 'PATCHING_DIO';
 export const DELETE_DIO = 'DELETE_DIO';
 export const DELETING_DIO = 'DELETING_DIO';
 export const DELETE_DIO_INVALID_PASSWORD = 'DELETE_DIO_INVALID_PASSWORD';
-export const INVALIDADE_DIOS = 'INVALIDATE_DIOS';
+export const INVALIDATE_DIOS = 'INVALIDATE_DIOS';
 
 export const invalidateDios = (localId) => ({
-  type: INVALIDADE_DIOS,
+  type: INVALIDATE_DIOS,
   localId
 });
 export const requestingDios = (localId) => ({
