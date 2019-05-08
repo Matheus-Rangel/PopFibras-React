@@ -7,7 +7,7 @@ import {
 } from '../actions/cabos-actions';
 import {fromJS, set, merge, remove} from 'immutable';
 
-const initialState = fromJS({
+export const initialState = fromJS({
   didInvalidate: true,
   requesting: false,
   posting: false,

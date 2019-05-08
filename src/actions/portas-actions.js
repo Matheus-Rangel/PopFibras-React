@@ -3,12 +3,8 @@ import {apiGetPortas, apiPatchPorta} from '../services/fetch-porta';
 
 export const REQUESTING_PORTAS = 'REQUESTING_PORTAS';
 export const RECEIVE_PORTAS = 'RECEIVE_PORTAS';
-export const POST_PORTA = 'POST_PORTA';
-export const POSTING_PORTA = 'POSTING_PORTA';
 export const PATCH_PORTA = 'PATCH_PORTA';
 export const PATCHING_PORTA = 'PATCHING_PORTA';
-export const DELETE_PORTA = 'DELETE_PORTA';
-export const DELETING_PORTA = 'DELETING_PORTA';
 export const INVALIDADE_PORTAS = 'INVALIDATE_PORTAS';
 
 export const invalidatePortas = (dioId) => ({

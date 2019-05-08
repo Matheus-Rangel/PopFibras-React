@@ -6,7 +6,7 @@ import {
 
 let buffer = []; // create an empty array which will be populated with all actions dispatched by Redux
 
-export const jwt = store => next => action => {
+export default store => next => action => {
   buffer.push(action);
   if (action.type === INVALID_TOKEN) {
     let theStore = store.getState();

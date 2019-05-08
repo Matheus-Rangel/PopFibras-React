@@ -5,7 +5,7 @@ import {
   LOGIN_FAILURE, LOGIN_SUCCESS, LOGOUT
 } from '../actions/auth-actions';
 import {fromJS, set, merge} from 'immutable';
-const initialState = fromJS({
+export const initialState = fromJS({
   refreshToken: '',
   accessToken: '',
   username: '',

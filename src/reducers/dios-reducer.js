@@ -21,7 +21,7 @@ function setDios(state, localId){
   }
   return state
 }
-const initialState = fromJS({})
+export const initialState = fromJS({})
 export const dios = (state = initialState, action) => {
   const {localId} = action
   state = setDios(state, localId)
