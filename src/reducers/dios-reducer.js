@@ -30,7 +30,7 @@ export const dios = (state = initialState, action) => {
     case REQUESTING_DIOS:
       return setIn(state, [localId, 'requesting'], true);
     
-    case  RECEIVE_DIOS:
+    case RECEIVE_DIOS:
       localDios = merge(localDios, {requesting:false, itens:action.payload, didInvalidate:false})
       return set(state, localId, localDios);
     
